@@ -59,7 +59,6 @@ airflow:
 
     users:
       - username: admin
-        password: hello
         role: Admin
         email: schreepc@renci.org
         firstName: Carl
