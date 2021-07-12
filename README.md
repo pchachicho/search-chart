@@ -1,6 +1,6 @@
 # search
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.3](https://img.shields.io/badge/Version-0.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airflow and Redis.
 
@@ -8,12 +8,12 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://airflow-helm.github.io/charts | airflow | 8.0.9 |
+| https://airflow-helm.github.io/charts | airflow | 8.1.3 |
 | https://charts.bitnami.com/bitnami | redis | 13.0.0 |
-| https://cschreep.github.io/charts/ | search-api | 0.1.1 |
-| https://cschreep.github.io/charts/ | search-ui | 0.1.0 |
 | https://helm.elastic.co | elasticsearch | 7.12.0 |
-| https://yaphetkg.github.io | tranql | 0.1.1 |
+| https://helx-charts.github.io/charts/ | search-api | 0.1.1 |
+| https://helx-charts.github.io/charts/ | search-ui | 0.1.0 |
+| https://yaphetkg.github.io | tranql | 0.1.2 |
 
 ## Values
 
@@ -21,6 +21,7 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 |-----|------|---------|-------------|
 | airflow.airflow.config.AIRFLOW__CORE__LOAD_EXAMPLES | string | `"FALSE"` |  |
 | airflow.airflow.config.AIRFLOW__KUBERNETES__DELETE_WORKER_PODS | string | `"TRUE"` |  |
+| airflow.airflow.config.AIRFLOW__SCHEDULER__SCHEDULE_AFTER_TASK_EXECUTION | string | `"FALSE"` |  |
 | airflow.airflow.config.AIRFLOW__WEBSERVER__BASE_URL | string | `""` |  |
 | airflow.airflow.configSecretsName | string | `"airflow-config-secrets"` |  |
 | airflow.airflow.executor | string | `"KubernetesExecutor"` |  |
@@ -57,6 +58,7 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | airflow.airflow.image.pullPolicy | string | `"Always"` |  |
 | airflow.airflow.image.repository | string | `"helxplatform/roger"` |  |
 | airflow.airflow.image.tag | string | `"0.2.dev0"` |  |
+| airflow.airflow.kubernetesPodTemplate.resources | object | `{}` |  |
 | airflow.dags.gitSync.branch | string | `"master"` |  |
 | airflow.dags.gitSync.enabled | bool | `true` |  |
 | airflow.dags.gitSync.repo | string | `"https://github.com/helxplatform/roger.git"` |  |
@@ -93,6 +95,8 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | persistence.storageClass | string | `""` |  |
 | redis.cluster.slaveCount | int | `1` |  |
 | redis.clusterDomain | string | `"cluster.local"` |  |
+| redis.configmap | string | `"# Disables appendonly , this instance is readonly. And needs to be\n# seeded from RDB files if needed.\nappendonly no\n# Disable RDB persistence, AOF persistence already enabled.\nsave \"\""` |  |
+| redis.dumpUri | string | `"https://stars.renci.org/var/kgx_data/roger_graph.rdb"` |  |
 | redis.enabled | bool | `true` |  |
 | redis.existingSecret | string | `"helx-redis-secret"` |  |
 | redis.existingSecretPasswordKey | string | `"password"` |  |
@@ -105,6 +109,7 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | redis.master.resources.requests.cpu | string | `"200m"` |  |
 | redis.master.resources.requests.memory | string | `"8Gi"` |  |
 | redis.master.service.port | int | `6379` |  |
+| redis.persistence.existingClaim | string | `"redis-data"` |  |
 | redis.redis.command | string | `"redis-server"` |  |
 | redis.slave.command | string | `""` |  |
 | redis.slave.extraFlags[0] | string | `"--loadmodule /usr/lib/redis/modules/redisgraph.so"` |  |
