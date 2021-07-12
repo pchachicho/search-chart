@@ -20,6 +20,7 @@ airflow:
         persistentVolumeClaim:
           claimName: search-data
 
+    usersUpdate: true
     configSecretsName: airflow-config-secrets
 
     # Resource config for all task runner pods.
