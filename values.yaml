@@ -13,6 +13,61 @@ airflow:
       # Provide http://<URL to nginx >/<web-prefix>
       AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "TRUE"
       AIRFLOW__WEBSERVER__BASE_URL: ""
+    extraEnv:
+      - name: ROGER_ELASTICSEARCH_HOST
+        valueFrom:
+          configMapKeyRef:
+            name: search-elastic-config
+            key: host
+      - name: ROGER_ELASTICSEARCH_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: search-elastic-secret
+            key: password
+      - name: ROGER_ELASTICSEARCH_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: search-elastic-secret
+            key: username
+      - name: ROGER_REDISGRAPH_HOST
+        valueFrom:
+          configMapKeyRef:
+            name: search-redis-config
+            key: host
+      - name: ROGER_REDISGRAPH_GRAPH
+        valueFrom:
+          configMapKeyRef:
+            name: search-redis-config
+            key: graph
+      - name: ROGER_REDISGRAPH_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: search-redis-secret
+            key: password
+      - name: ROGER_REDISGRAPH_PORT
+        valueFrom:
+          configMapKeyRef:
+            name: search-redis-config
+            key: port
+      - name: ROGER_DATA_DIR
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: data_directory
+      - name: ROGER_ELASTICSEARCH_NBOOST__HOST
+        value: nboost $ TODO compute this
+      - name: ROGER_INDEXING_TRANQL__ENDPOINT
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: tranql_endpoint
+        value:
+      - name: AIRFLOW__CORE__FERNET_KEY
+        valueFrom:
+          secretKeyRef:
+            # Same as airflow.configSecretsName
+            name: airflow-config-secrets
+            key: fernet-key
     extraVolumeMounts:
       - name: airflow-data
         mountPath: /opt/airflow/share/data
@@ -169,6 +224,7 @@ tranql:
     port: 6379
     secret: search-redis-secret
     secretPasswordKey: password
+  webPrefix: "/tranql"  # TODO this and the one below should be combined
   extraEnv:
     - name: WEB_PATH_PREFIX
       value: "/tranql"
