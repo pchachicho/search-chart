@@ -18,7 +18,7 @@ metadata:
     chart: "{{ .Chart.Name }}"
     app: "{{ template "search.fullname" . }}"
 data:
-  host: "{{ template "search.api.redis.fullname" . }}"
+  host: "{{ template "search.api.redis.fullname" . }}-master"
   port: "6379"
   graph: "test"
 ---
