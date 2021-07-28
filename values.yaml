@@ -7,11 +7,67 @@ airflow:
       pullPolicy: Always
     executor: KubernetesExecutor
     config:
-      AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "TRUE"
       AIRFLOW__CORE__LOAD_EXAMPLES: "FALSE"
+      AIRFLOW__CORE__LOGGING_LEVEL: "INFO"
       AIRFLOW__SCHEDULER__SCHEDULE_AFTER_TASK_EXECUTION: "FALSE"
       # Provide http://<URL to nginx >/<web-prefix>
+      AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "TRUE"
       AIRFLOW__WEBSERVER__BASE_URL: ""
+    extraEnv:
+      - name: ROGER_ELASTICSEARCH_HOST
+        valueFrom:
+          configMapKeyRef:
+            name: search-elastic-config
+            key: host
+      - name: ROGER_ELASTICSEARCH_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: search-elastic-secret
+            key: password
+      - name: ROGER_ELASTICSEARCH_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: search-elastic-secret
+            key: username
+      - name: ROGER_REDISGRAPH_HOST
+        valueFrom:
+          configMapKeyRef:
+            name: search-redis-config
+            key: host
+      - name: ROGER_REDISGRAPH_GRAPH
+        valueFrom:
+          configMapKeyRef:
+            name: search-redis-config
+            key: graph
+      - name: ROGER_REDISGRAPH_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: search-redis-secret
+            key: password
+      - name: ROGER_REDISGRAPH_PORT
+        valueFrom:
+          configMapKeyRef:
+            name: search-redis-config
+            key: port
+      - name: ROGER_DATA_DIR
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: data_directory
+      - name: ROGER_ELASTICSEARCH_NBOOST__HOST
+        value: nboost $ TODO compute this
+      - name: ROGER_INDEXING_TRANQL__ENDPOINT
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: tranql_endpoint
+        value:
+      - name: AIRFLOW__CORE__FERNET_KEY
+        valueFrom:
+          secretKeyRef:
+            # Same as airflow.configSecretsName
+            name: airflow-config-secrets
+            key: fernet-key
     extraVolumeMounts:
       - name: airflow-data
         mountPath: /opt/airflow/share/data
@@ -30,7 +86,7 @@ airflow:
           # memory: 1Gi
 
   externalRedis:
-    host: search-redis-master
+    host: ""
     passwordSecret: search-redis-secret
     passwordSecretKey: password
 
@@ -81,40 +137,6 @@ api:
     annotations: {}
     apiPort: "5551"
   debug: false
-
-ui:
-  service:
-    name: ui
-    type: ClusterIP
-    servicePort: 8080
-    annotations: {}
-  http_port: 8080
-  container_port: 8080
-  image:
-    repository: cschreep/helx-search-ui
-    tag: "1.1.1-dev"
-    pullPolicy: Always
-  imagePullSecrets: [ ]
-  # Add any extra environment variables not already defined in the chart.
-  resources:
-    limits:
-      cpu: 200m
-      memory: 320Mi
-    requests:
-      cpu: 50m
-      memory: 64Mi
-  enabled: true
-  app_name: ui
-
-  api_url: "http://localhost:5551"
-  node_env: development
-
-  appPort: 8080
-  containerPort: 8080
-
-  extraEnv:
-    - name: PUBLIC_URL
-      value: "/ui"
 
 elasticsearch:
   enabled: true
@@ -198,10 +220,11 @@ secrets:
 tranql:
   enabled: true
   existingRedis:
-    host: search-redis-slave
+    host: ""
     port: 6379
     secret: search-redis-secret
     secretPasswordKey: password
+  webPrefix: "/tranql"  # TODO this and the one below should be combined
   extraEnv:
     - name: WEB_PATH_PREFIX
       value: "/tranql"
