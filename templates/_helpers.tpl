@@ -71,6 +71,22 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
+{{- define "search.elasticsearch.masterService" -}}
+{{- if empty .Values.elasticsearch.masterService -}}
+{{- if empty .Values.elasticsearch.fullnameOverride -}}
+{{- if empty .Values.elasticsearch.nameOverride -}}
+{{ .Values.elasticsearch.clusterName }}-master
+{{- else -}}
+{{ .Values.elasticsearch.nameOverride }}-master
+{{- end -}}
+{{- else -}}
+{{ .Values.elasticsearch.fullnameOverride }}
+{{- end -}}
+{{- else -}}
+{{ .Values.elasticsearch.masterService }}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Get the elasticsearch password secret.
 */}}
@@ -143,7 +159,7 @@ Environment vars for API pods
 {{- end }}
 {{- if .Values.redis.enabled }}
 - name: REDIS_HOST
-  value: {{ include "search.api.redis.fullname" . }}-master
+  value: {{ include "search.redis.fullname" . }}-master
 - name: REDIS_PORT
   value: {{ .Values.redis.redisPort | quote }}
 {{- if .Values.redis.usePassword }}
@@ -153,8 +169,8 @@ Environment vars for API pods
   {{- else }}
   valueFrom:
     secretKeyRef:
-      name: {{ include "search.api.redis.secretName" . }}
-      key: {{ include "search.api.redis.secretPasswordKey" . }}
+      name: {{ include "search.redis.secretName" . }}
+      key: {{ include "search.redis.secretPasswordKey" . }}
   {{- end }}
   {{- end }}
   {{- end }}
@@ -213,7 +229,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "search.api.redis.fullname" -}}
+{{- define "search.redis.fullname" -}}
 {{- if .Values.redis.fullnameOverride -}}
 {{- .Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -229,18 +245,18 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Get the redis password secret.
 */}}
-{{- define "search.api.redis.secretName" -}}
+{{- define "search.redis.secretName" -}}
 {{- if .Values.redis.existingSecret -}}
 {{- printf "%s" .Values.redis.existingSecret -}}
 {{- else -}}
-{{- printf "%s" (include "search.api.redis.fullname" .) -}}
+{{- printf "%s" (include "search.redis.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
 Get the password key to be retrieved from Redis(TM) secret.
 */}}
-{{- define "search.api.redis.secretPasswordKey" -}}
+{{- define "search.redis.secretPasswordKey" -}}
 {{- if and .Values.redis.existingSecret .Values.redis.existingSecretPasswordKey -}}
 {{- printf "%s" .Values.redis.existingSecretPasswordKey -}}
 {{- else -}}
@@ -248,28 +264,14 @@ Get the password key to be retrieved from Redis(TM) secret.
 {{- end -}}
 {{- end -}}
 
-{{- define "search.ui.fullname" -}}
-{{- if .Values.ui.fullnameOverride }}
-{{- .Values.ui.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default "ui" .Values.ui.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- $name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-{{- end }}
-
-
 {{/*
 Create a default fully qualified app name for web.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "search.tranql.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.tranql.fullnameOverride }}
+{{- .Values.tranql.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default "tranql" .Values.tranql.nameOverride }}
 {{- if contains $name .Release.Name }}
