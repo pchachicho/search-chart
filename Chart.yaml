@@ -31,6 +31,6 @@ dependencies:
     repository: "https://charts.bitnami.com/bitnami"
     condition: redis.enabled
   - name: tranql
-    version: "0.1.3"
+    version: "0.1.4"
     condition: tranql.enabled
     repository: "https://helx-charts.github.io/charts/"
