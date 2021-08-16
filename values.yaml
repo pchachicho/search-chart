@@ -149,7 +149,7 @@ api:
   debug: false
 
 config:
-  input_sets: "bdc-dbGaP,nida,topmed"
+  input_sets: "bdc-dbGaP,topmed"
   kgx_data_sets: "baseline,sparc-kgx"
 
 elasticsearch:
