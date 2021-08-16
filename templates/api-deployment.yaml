@@ -17,7 +17,7 @@ spec:
       imagePullSecrets:
         {{- toYaml .Values.api.deployment.imagePullSecrets | nindent 8 }}
       containers:
-      - image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
+      - image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}
         imagePullPolicy: {{ .Values.api.image.pullPolicy }}
         name: {{ include "search.api.web.fullname" . }}-container
         env: {{ include "search.api.web.deploymentEnv" . | nindent 10 }}
