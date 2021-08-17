@@ -3,7 +3,7 @@ airflow:
   airflow:
     image:
       repository: helxplatform/roger
-      tag: "0.3.0"
+      tag: "0.4.dev1"
       pullPolicy: Always
     executor: KubernetesExecutor
     config:
@@ -14,6 +14,16 @@ airflow:
       AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "TRUE"
       AIRFLOW__WEBSERVER__BASE_URL: ""
     extraEnv:
+      - name: ROGER_DATA_DIR
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: data_directory
+      - name: ROGER_DUG__INPUTS_DATA__SETS
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: input_sets
       - name: ROGER_ELASTICSEARCH_HOST
         valueFrom:
           configMapKeyRef:
@@ -49,11 +59,11 @@ airflow:
           configMapKeyRef:
             name: search-redis-config
             key: port
-      - name: ROGER_DATA_DIR
+      - name: ROGER_KGX_DATA__SETS
         valueFrom:
           configMapKeyRef:
             name: search-data-config
-            key: data_directory
+            key: kgx_data_sets
       - name: ROGER_ELASTICSEARCH_NBOOST__HOST
         value: nboost $ TODO compute this
       - name: ROGER_INDEXING_TRANQL__ENDPOINT
@@ -119,7 +129,7 @@ airflow:
 api:
   image:
     repository: helxplatform/dug
-    tag: "2.3.0"
+    tag: ""
     pullPolicy: IfNotPresent
 
   appName: webserver
@@ -137,6 +147,10 @@ api:
     annotations: {}
     apiPort: "5551"
   debug: false
+
+config:
+  input_sets: "bdc-dbGaP,topmed"
+  kgx_data_sets: "baseline,sparc-kgx"
 
 elasticsearch:
   enabled: true
