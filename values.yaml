@@ -150,7 +150,7 @@ api:
 
 config:
   input_sets: "bdc-dbGaP,topmed"
-  kgx_data_sets: "baseline,sparc-kgx"
+  kgx_data_sets: "baseline-graph,sparc-kgx"
 
 elasticsearch:
   enabled: true
