@@ -3,7 +3,7 @@ airflow:
   airflow:
     image:
       repository: helxplatform/roger
-      tag: "0.4.dev1"
+      tag: "0.5.0"
       pullPolicy: Always
     executor: KubernetesExecutor
     config:
