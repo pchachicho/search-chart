@@ -35,4 +35,4 @@ dependencies:
   - name: tranql
     version: "0.2.0"
     condition: tranql.enabled
-    repository: "https://helx-charts.github.io/charts/"
+    repository: "https://helxplatform.github.io/helm-charts/"
