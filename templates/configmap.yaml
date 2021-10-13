@@ -39,3 +39,9 @@ data:
   {{- else }}
   tranql_endpoint: "{{.Values.tranql.externalTranql }}"
   {{- end }}
+  {{- if .Values.config.s3.enabled }}
+  s3_access_key: {{ .Values.config.s3.access_key }}
+  s3_bucket: {{ .Values.config.s3.bucket }}
+  s3_host: {{ .Values.config.s3.host }}
+  s3_secret_key: {{ .Values.config.s3.secret_key }}
+  {{- end }}

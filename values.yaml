@@ -59,6 +59,26 @@ airflow:
           configMapKeyRef:
             name: search-redis-config
             key: port
+      - name: ROGER_S3_ACCESS__KEY
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: s3_access_key
+      - name: ROGER_S3_BUCKET
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: s3_bucket
+      - name: ROGER_S3_HOST
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: s3_host
+      - name: ROGER_S3_SECRET__KEY
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: s3_secret_key
       - name: ROGER_KGX_DATA__SETS
         valueFrom:
           configMapKeyRef:
@@ -151,6 +171,12 @@ api:
 config:
   input_sets: "bdc-dbGaP,topmed"
   kgx_data_sets: "baseline-graph,sparc-kgx"
+  s3:
+    enabled: false
+    host: ""
+    bucket: ""
+    access_key: ""
+    secret_key: ""
 
 elasticsearch:
   enabled: true
