@@ -3,7 +3,7 @@ airflow:
   airflow:
     image:
       repository: helxplatform/roger
-      tag: "0.5.0"
+      tag: "0.6.0"
       pullPolicy: Always
     executor: KubernetesExecutor
     config:
@@ -182,15 +182,12 @@ redis:
     existingClaim: "redis-data"
   usePassword: true
   clusterDomain: cluster.local
-  existingSecret: search-redis-secret
-  existingSecretPasswordKey: password
+  auth:
+    existingSecret: search-redis-secret
+    existingSecretPasswordKey: password
   image:
     repository: redislabs/redisgraph
-    tag: 2.2.14
-  redis:
-    command: "redis-server"
-  cluster:
-    slaveCount: 1
+    tag: 2.8.4
   master:
     resources:
       requests:
@@ -198,27 +195,54 @@ redis:
         cpu: 200m
     command: ""
     readinessProbe:
-      enabled: false
+      enabled: true
+      # to make it available ASAP
+      periodSeconds: 1
+      # spans 25 mins (150 * 10 secs)
+      failureThreshold: 1
     livenessProbe:
+      # Liveliness probes can be off, since
+      # With big cache data to load or sync , redis is alive but
+      # responds with LOADING message. to avoid cyclic restarts
+      # keeping this off
       enabled: false
     extraFlags:
-      - "--loadmodule /usr/lib/redis/modules/redisgraph.so"
-    service:
-      port: 6379
-  slave:
+      - "--loadmodule"
+      - "/usr/lib/redis/modules/redisgraph.so"
+      - "THREAD_COUNT"
+      - "8"
+      - "OMP_THREAD_COUNT"
+      - "16"
+  replica:
+#    replicaCount: 1
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPU: 100
     resources:
       requests:
         memory: 8Gi
-        cpu: 200m
-    command: ""
+        cpu: 1000m
+    extraFlags:
+      - "--loadmodule"
+      - "/usr/lib/redis/modules/redisgraph.so"
+      - "THREAD_COUNT"
+      - "8"
+      - "OMP_THREAD_COUNT"
+      - "16"
     readinessProbe:
-      enabled: false
+      enabled: true
+      # to make it available ASAP
+      periodSeconds: 1
+      # Having a lower count will make sure that routing to a replica that
+      # is not ready yet to not be routed to.
+      failureThreshold: 1
+      # make sure its really ready
+      successThreshold: 5
     livenessProbe:
       enabled: false
-    extraFlags:
-      - "--loadmodule /usr/lib/redis/modules/redisgraph.so"
-    service:
-      port: 6379
+
 
 secrets:
   elastic:
