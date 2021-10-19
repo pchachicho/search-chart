@@ -24,6 +24,11 @@ airflow:
           configMapKeyRef:
             name: search-data-config
             key: input_sets
+      - name: ROGER_DUG__INPUTS_DATA__SOURCE
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: data_source
       - name: ROGER_ELASTICSEARCH_HOST
         valueFrom:
           configMapKeyRef:
@@ -170,9 +175,9 @@ api:
 
 config:
   input_sets: "bdc-dbGaP,topmed"
+  data_source: "stars"
   kgx_data_sets: "baseline-graph,sparc-kgx"
   s3:
-    enabled: false
     host: ""
     bucket: ""
     access_key: ""
