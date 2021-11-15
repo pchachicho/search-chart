@@ -249,7 +249,7 @@ Get the redis password secret.
 {{- if .Values.redis.existingSecret -}}
 {{- printf "%s" .Values.redis.existingSecret -}}
 {{- else -}}
-{{- printf "%s" (include "search.redis.fullname" .) -}}
+{{- printf "%s" .Values.secrets.redis.name -}}
 {{- end -}}
 {{- end -}}
 
@@ -260,7 +260,7 @@ Get the password key to be retrieved from Redis(TM) secret.
 {{- if and .Values.redis.existingSecret .Values.redis.existingSecretPasswordKey -}}
 {{- printf "%s" .Values.redis.existingSecretPasswordKey -}}
 {{- else -}}
-{{- printf "redis-password" -}}
+{{- printf "%s" .Values.secrets.redis.passwordKey -}}
 {{- end -}}
 {{- end -}}
 
