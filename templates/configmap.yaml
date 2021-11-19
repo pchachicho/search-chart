@@ -35,6 +35,7 @@ data:
   data_source: {{ .Values.config.data_source }}
   input_sets: {{ .Values.config.input_sets }}
   kgx_data_sets: {{ .Values.config.kgx_data_sets }}
+  normalizer_url: {{ .Values.config.annotation.normalizer_url | quote }}
   s3_access_key: {{ .Values.config.s3.access_key }}
   s3_bucket: {{ .Values.config.s3.bucket }}
   s3_host: {{ .Values.config.s3.host }}

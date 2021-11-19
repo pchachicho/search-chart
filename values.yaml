@@ -14,6 +14,11 @@ airflow:
       AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "TRUE"
       AIRFLOW__WEBSERVER__BASE_URL: ""
     extraEnv:
+      - name: ROGER_ANNOTATION_NORMALIZER
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: normalizer_url
       - name: ROGER_DATA_DIR
         valueFrom:
           configMapKeyRef:
@@ -174,6 +179,8 @@ api:
   debug: false
 
 config:
+  annotation:
+    normalizer_url: "https://nodenormalization-sri.renci.org/get_normalized_nodes?conflate=false&curie="
   input_sets: "bdc-dbGaP,topmed"
   data_source: "stars"
   kgx_data_sets: "baseline-graph,sparc-kgx"
@@ -244,6 +251,8 @@ redis:
       - "8"
       - "OMP_THREAD_COUNT"
       - "16"
+      - "--appendonly"
+      - "no"
   replica:
 #    replicaCount: 1
     autoscaling:
