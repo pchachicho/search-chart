@@ -208,6 +208,8 @@ elasticsearch:
         secretKeyRef:
           name: search-elastic-secret
           key: username
+    - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
+      value: "true"
 
 nboost:
   enabled: false
