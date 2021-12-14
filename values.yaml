@@ -192,7 +192,7 @@ config:
 
 elasticsearch:
   enabled: true
-  imageTag: "7.12.0"
+  imageTag: "7.16.1"
   replicas: 1
   # default, maybe we ought to increase this as size increases
   # esJavaOpts: "-Xmx1g -Xms1g"
