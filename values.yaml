@@ -192,9 +192,11 @@ config:
 
 elasticsearch:
   enabled: true
-  imageTag: "7.12.0"
+  imageTag: "7.16.1"
   replicas: 1
-
+  # default, maybe we ought to increase this as size increases
+  # esJavaOpts: "-Xmx1g -Xms1g"
+  esJavaOpts: "-Xmx1g -Xms1g -Dlog4j2.disable.jmx=true -Dlog4j2.formatMsgNoLookups=true"
   extraEnvs:
     - name: ELASTIC_PASSWORD
       valueFrom:
@@ -206,6 +208,8 @@ elasticsearch:
         secretKeyRef:
           name: search-elastic-secret
           key: username
+    - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
+      value: "true"
 
 nboost:
   enabled: false
