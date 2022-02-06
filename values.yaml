@@ -216,7 +216,7 @@ nboost:
 
 persistence:
   storageClass: ""
-  pvcSize: 1Gi
+  pvcSize: 10Gi
 
 redis:
   enabled: true
