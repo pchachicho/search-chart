@@ -10,6 +10,6 @@ dependencies:
   version: 15.4.1
 - name: tranql
   repository: http://localhost:8080/
-  version: 0.4.1-dev
-digest: sha256:a4a1e7aaae7b7d8efc1c94f29c0747ee99c6b7f5ebfdae33b0c3a8905f02d35f
-generated: "2022-02-04T21:00:45.192968-05:00"
+  version: 0.4.2
+digest: sha256:3dd91b8959c53cf5b582bc841f8dd7054a6b3d4e6c4499736d9910fc63f3b47e
+generated: "2022-02-09T13:44:50.321815-05:00"
