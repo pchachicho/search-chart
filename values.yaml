@@ -94,6 +94,11 @@ airflow:
           configMapKeyRef:
             name: search-data-config
             key: kgx_data_sets
+      - name: ROGER_INDEXING_NODE__TO__ELEMENT__QUERIES_ENABLED
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: node_to_queries_enabled
       - name: ROGER_ELASTICSEARCH_NBOOST__HOST
         value: nboost $ TODO compute this
       - name: ROGER_INDEXING_TRANQL__ENDPOINT
@@ -121,9 +126,15 @@ airflow:
 
     # Resource config for all task runner pods.
     kubernetesPodTemplate:
-      resources: {}
-        # requests:
-          # memory: 1Gi
+      resources:
+        limits:
+          ephemeral-storage: 4G
+          cpu: 2
+          memory: 16G
+        requests:
+          ephemeral-storage: 4G
+          cpu: 2
+          memory: 16G
 
   externalRedis:
     host: ""
@@ -138,6 +149,26 @@ airflow:
       branch: "main"
       revision: "HEAD"
       syncWait: 60
+  scheduler:
+    resources:
+      limits:
+        cpu: 2
+        memory: 4G
+      requests:
+        cpu: 2
+        memory: 4G
+  web:
+    extraPipPackages:
+    - Flask-AppBuilder~=3.2.0
+    resources:
+      limits:
+        cpu: 3
+        ephemeral-storage: 1G
+        memory: 4G
+      requests:
+        cpu: 3
+        ephemeral-storage: 1G
+        memory: 4G
 
   logs:
     path: /opt/airflow/share/logs
@@ -170,7 +201,13 @@ api:
     extraEnv: []
     logLevel: INFO
     imagePullSecrets: []
-    resources: {}
+    resources:
+      limits:
+        cpu: 2
+        memory: 2G
+      requests:
+        cpu: 2
+        memory: 2G
   service:
     name: search-api
     type: ClusterIP
@@ -180,10 +217,11 @@ api:
 
 config:
   annotation:
-    normalizer_url: "https://nodenormalization-sri.renci.org/get_normalized_nodes?conflate=false&curie="
+    normalizer_url: http://nn-web-prod-node-normalization-web-service-root.translator.svc.cluster.local:8080/get_normalized_nodes?conflate=false&curie=
   input_sets: "bdc-dbGaP,topmed"
   data_source: "stars"
   kgx_data_sets: "baseline-graph,sparc-kgx"
+  node_to_queries_enabled: "false"
   s3:
     host: ""
     bucket: ""
@@ -191,6 +229,8 @@ config:
     secret_key: ""
 
 elasticsearch:
+  sysctlInitContainer:
+    enabled: false
   enabled: true
   imageTag: "7.16.1"
   replicas: 1
@@ -231,10 +271,15 @@ redis:
     repository: redislabs/redisgraph
     tag: 2.8.4
   master:
+    persistence:
+      size: 16G
     resources:
+      limits:
+        cpu: 2
+        memory: 15Gi
       requests:
-        memory: 8Gi
-        cpu: 200m
+        cpu: 500m
+        memory: 12Gi
     command: ""
     readinessProbe:
       enabled: true
@@ -264,10 +309,15 @@ redis:
       minReplicas: 1
       maxReplicas: 2
       targetCPU: 100
+    persistence:
+      size: 16G
     resources:
+      limits:
+        memory: 15Gi
+        cpu: 2
       requests:
-        memory: 8Gi
-        cpu: 1000m
+        memory: 12Gi
+        cpu: 500m
     extraFlags:
       - "--loadmodule"
       - "/usr/lib/redis/modules/redisgraph.so"
@@ -309,6 +359,16 @@ tranql:
   extraEnv:
     - name: WEB_PATH_PREFIX
       value: "/tranql"
-
+  gunicorn:
+    # single worker for now to avoid recomputing of schema per worker
+    workerCount: 1
+    workerTimeout: 1600
+  resources:
+    limits:
+      cpu: 2
+      memory: 2G
+    requests:
+      cpu: 500m
+      memory: 2G
   redis:
     enabled: false

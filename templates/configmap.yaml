@@ -45,3 +45,4 @@ data:
   {{- else }}
   tranql_endpoint: "{{.Values.tranql.externalTranql }}"
   {{- end }}
+  node_to_queries_enabled: "{{ .Values.config.node_to_queries_enabled }}"
