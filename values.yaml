@@ -285,8 +285,8 @@ redis:
         cpu: 2
         memory: 32Gi
       requests:
-        cpu: 2
-        memory: 30Gi
+        cpu: 1
+        memory: 12Gi
     command: ""
     readinessProbe:
       enabled: true
@@ -320,11 +320,11 @@ redis:
       size: 24G
     resources:
       limits:
+        cpu: 2
         memory: 32Gi
-        cpu: 2
       requests:
-        memory: 30Gi
-        cpu: 2
+        cpu: 1
+        memory: 12Gi
     extraFlags:
       - "--loadmodule"
       - "/usr/lib/redis/modules/redisgraph.so"
