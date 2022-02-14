@@ -17,7 +17,7 @@ type: application
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 version: 1.6.4
 
-appVersion: "2.7.0"
+appVersion: "2.8.0"
 
 dependencies:
   - name: airflow
