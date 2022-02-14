@@ -250,13 +250,20 @@ elasticsearch:
           key: username
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
+  resources:
+    limits:
+      cpu: 1
+      memory: 2G
+    requests:
+      cpu: 1
+      memory: 2G
 
 nboost:
   enabled: false
 
 persistence:
   storageClass: ""
-  pvcSize: 24Gi
+  pvcSize: 32Gi
 
 redis:
   enabled: true
@@ -272,13 +279,13 @@ redis:
     tag: 2.8.4
   master:
     persistence:
-      size: 16G
+      size: 24G
     resources:
       limits:
         cpu: 2
-        memory: 15Gi
+        memory: 32Gi
       requests:
-        cpu: 500m
+        cpu: 1
         memory: 12Gi
     command: ""
     readinessProbe:
@@ -310,14 +317,14 @@ redis:
       maxReplicas: 2
       targetCPU: 100
     persistence:
-      size: 16G
+      size: 24G
     resources:
       limits:
-        memory: 15Gi
         cpu: 2
+        memory: 32Gi
       requests:
+        cpu: 1
         memory: 12Gi
-        cpu: 500m
     extraFlags:
       - "--loadmodule"
       - "/usr/lib/redis/modules/redisgraph.so"
