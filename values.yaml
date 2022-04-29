@@ -19,6 +19,16 @@ airflow:
           configMapKeyRef:
             name: search-data-config
             key: normalizer_url
+      - name: ROGER_ANNOTATION_ANNOTATOR
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: annotator_url
+      - name: ROGER_ANNOTATION_SYNONYM__SERVICE
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: synonymizer_url
       - name: ROGER_DATA_DIR
         valueFrom:
           configMapKeyRef:
@@ -218,6 +228,8 @@ api:
 config:
   annotation:
     normalizer_url: http://nn-web-prod-node-normalization-web-service-root.translator.svc.cluster.local:8080/get_normalized_nodes?conflate=false&curie=
+    annotator_url: https://api.monarchinitiative.org/api/nlp/annotate/entities?min_length=4&longest_only=false&include_abbreviation=false&include_acronym=false&include_numbers=false&content=
+    synonymizer_url: https://onto.renci.org/synonyms/
   input_sets: "bdc-dbGaP,topmed"
   data_source: "stars"
   kgx_data_sets: "baseline-graph,sparc-kgx"
