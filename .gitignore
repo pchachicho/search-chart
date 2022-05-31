@@ -22,6 +22,8 @@ Session.vim
 
 # Chart dependencies
 **/charts/*.tgz
+*.tgz
+Chart.lock
 
 .history
 
