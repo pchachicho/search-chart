@@ -5,7 +5,6 @@ airflow:
       repository: helxplatform/roger
       tag: "0.6.0"
       pullPolicy: Always
-    executor: KubernetesExecutor
     config:
       AIRFLOW__CORE__LOAD_EXAMPLES: "FALSE"
       AIRFLOW__CORE__LOGGING_LEVEL: "INFO"
@@ -13,6 +12,8 @@ airflow:
       # Provide http://<URL to nginx >/<web-prefix>
       AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "TRUE"
       AIRFLOW__WEBSERVER__BASE_URL: ""
+    configSecretsName: airflow-config-secrets
+    executor: KubernetesExecutor
     extraEnv:
       - name: ROGER_ANNOTATION_NORMALIZER
         valueFrom:
@@ -130,11 +131,6 @@ airflow:
       - name: airflow-data
         persistentVolumeClaim:
           claimName: search-data
-
-    usersUpdate: true
-    configSecretsName: airflow-config-secrets
-
-    # Resource config for all task runner pods.
     kubernetesPodTemplate:
       resources:
         limits:
@@ -145,12 +141,8 @@ airflow:
           ephemeral-storage: 4G
           cpu: 2
           memory: 16G
-
-  externalRedis:
-    host: ""
-    passwordSecret: search-redis-secret
-    passwordSecretKey: password
-
+    usersUpdate: true
+    # Resource config for all task runner pods.
   dags:
     gitSync:
       enabled: true
@@ -159,6 +151,21 @@ airflow:
       branch: "main"
       revision: "HEAD"
       syncWait: 60
+  externalRedis:
+    host: ""
+    passwordSecret: search-redis-secret
+    passwordSecretKey: password
+  flower:
+    enabled: false
+  logs:
+    path: /opt/airflow/share/logs
+    persistence:
+      enabled: true
+      storageClass: "" ## WARNING: your StorageClass MUST SUPPORT `ReadWriteMany`
+      accessMode: ReadWriteMany
+      size: 5Gi
+  redis:
+    enabled: false
   scheduler:
     resources:
       limits:
@@ -179,31 +186,15 @@ airflow:
         cpu: 3
         ephemeral-storage: 1G
         memory: 4G
-
-  logs:
-    path: /opt/airflow/share/logs
-    persistence:
-      enabled: true
-      storageClass: "" ## WARNING: your StorageClass MUST SUPPORT `ReadWriteMany`
-      accessMode: ReadWriteMany
-      size: 1Gi
-
-  redis:
-    enabled: false
-
-  flower:
-    enabled: false
-
   workers:
     enabled: false
-
 api:
   image:
     repository: helxplatform/dug
     tag: ""
     pullPolicy: IfNotPresent
-
   appName: webserver
+  debug: false
   deployment:
     apiPort: 5551
     apiWorkers: 4
@@ -223,8 +214,6 @@ api:
     type: ClusterIP
     annotations: {}
     apiPort: "5551"
-  debug: false
-
 config:
   annotation:
     normalizer_url: http://nn-web-prod-node-normalization-web-service-root.translator.svc.cluster.local:8080/get_normalized_nodes?conflate=false&curie=
@@ -239,15 +228,10 @@ config:
     bucket: ""
     access_key: ""
     secret_key: ""
-
 elasticsearch:
-  sysctlInitContainer:
-    enabled: false
-  enabled: true
-  imageTag: "7.16.1"
-  replicas: 1
   # default, maybe we ought to increase this as size increases
   # esJavaOpts: "-Xmx1g -Xms1g"
+  enabled: true
   esJavaOpts: "-Xmx1g -Xms1g -Dlog4j2.disable.jmx=true -Dlog4j2.formatMsgNoLookups=true"
   extraEnvs:
     - name: ELASTIC_PASSWORD
@@ -262,6 +246,8 @@ elasticsearch:
           key: username
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
+  imageTag: "7.16.1"
+  replicas: 1
   resources:
     limits:
       cpu: 1
@@ -269,26 +255,25 @@ elasticsearch:
     requests:
       cpu: 1
       memory: 2G
-
+  sysctlInitContainer:
+    enabled: false
 nboost:
   enabled: false
-
 persistence:
   storageClass: ""
   pvcSize: 32Gi
-
 redis:
-  enabled: true
-  persistence:
-    existingClaim: "redis-data"
-  usePassword: true
-  clusterDomain: cluster.local
   auth:
     existingSecret: search-redis-secret
     existingSecretPasswordKey: password
+  clusterDomain: cluster.local
+  enabled: true
   image:
     repository: redislabs/redisgraph
     tag: 2.8.4
+  persistence:
+    existingClaim: "redis-data"
+  usePassword: true
   master:
     persistence:
       size: 24G
@@ -322,7 +307,6 @@ redis:
       - "--appendonly"
       - "no"
   replica:
-#    replicaCount: 1
     autoscaling:
       enabled: true
       minReplicas: 1
@@ -355,8 +339,6 @@ redis:
       successThreshold: 5
     livenessProbe:
       enabled: false
-
-
 secrets:
   elastic:
     name: search-elastic-secret
@@ -366,7 +348,6 @@ secrets:
   redis:
     name: search-redis-secret
     passwordKey: password
-
 tranql:
   enabled: true
   existingRedis:
