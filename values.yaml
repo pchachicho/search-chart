@@ -360,7 +360,7 @@ tranql:
     - name: WEB_PATH_PREFIX
       value: "/tranql"
   gunicorn:
-    # single worker for now to avoid recomputing of schema per worker
+    # -- single worker for now to avoid recomputing of schema per worker
     workerCount: 1
     workerTimeout: 1600
   resources:
@@ -372,3 +372,9 @@ tranql:
       memory: 2G
   redis:
     enabled: false
+
+redis-insight:
+  # -- Enable/Disable Redis UI
+  enabled: False
+  # -- Url should be same as public ingress url
+  rootUrl: ""
