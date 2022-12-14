@@ -375,6 +375,6 @@ tranql:
 
 redis-insight:
   # -- Enable/Disable Redis UI
-  enabled: False
+  enabled: false
   # -- Url should be same as public ingress url
   rootUrl: ""
