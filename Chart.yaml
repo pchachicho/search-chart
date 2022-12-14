@@ -15,7 +15,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.9.0
+version: 1.10.0
 
 appVersion: "2.9.0"
 
@@ -35,4 +35,8 @@ dependencies:
   - name: tranql
     version: "0.4.2"
     condition: tranql.enabled
+    repository: "@helx-charts"
+  - name: redis-insight
+    version: "0.1.0"
+    condition: redis-insight.enabled
     repository: "@helx-charts"
