@@ -3,7 +3,7 @@ airflow:
   airflow:
     image:
       repository: helxplatform/roger
-      tag: "0.6.0"
+      tag: "latest"
       pullPolicy: Always
     config:
       AIRFLOW__CORE__LOAD_EXAMPLES: "FALSE"
@@ -246,7 +246,7 @@ elasticsearch:
           key: username
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
-  imageTag: "7.16.1"
+  imageTag: "7.16.3"
   replicas: 1
   resources:
     limits:
