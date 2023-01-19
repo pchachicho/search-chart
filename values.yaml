@@ -1,9 +1,21 @@
 airflow:
   enabled: true
+  pgbouncer:
+    enabled: false
+
+
   airflow:
+    dbMigrations:
+      enabled: true
+      ## if a post-install helm Job should be used (instead of a Deployment)
+      ## - [WARNING] setting `true` will NOT work with the helm `--wait` flag,
+      ##   this is because post-install helm Jobs run AFTER the main resources become Ready,
+      ##   which will cause a deadlock, as other resources require db-migrations to become Ready
+      ##
+      runAsJob: true
     image:
-      repository: helxplatform/roger
-      tag: "0.6.0"
+      repository: containers.renci.org/helxplatform/roger
+      tag: "latest"
       pullPolicy: Always
     config:
       AIRFLOW__CORE__LOAD_EXAMPLES: "FALSE"
@@ -167,6 +179,8 @@ airflow:
   redis:
     enabled: false
   scheduler:
+    logCleanup:
+      enabled: false
     resources:
       limits:
         cpu: 2
@@ -175,8 +189,6 @@ airflow:
         cpu: 2
         memory: 4G
   web:
-    extraPipPackages:
-    - Flask-AppBuilder~=3.2.0
     resources:
       limits:
         cpu: 3
@@ -187,6 +199,8 @@ airflow:
         ephemeral-storage: 1G
         memory: 4G
   workers:
+    enabled: false
+  triggerer:
     enabled: false
 api:
   image:
@@ -221,7 +235,7 @@ config:
     synonymizer_url: https://onto.renci.org/synonyms/
   input_sets: "bdc-dbGaP,topmed"
   data_source: "stars"
-  kgx_data_sets: "baseline-graph,sparc-kgx"
+  kgx_data_sets: "baseline-graph,cde-graph"
   node_to_queries_enabled: "false"
   s3:
     host: ""
@@ -246,7 +260,7 @@ elasticsearch:
           key: username
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
-  imageTag: "7.16.1"
+  imageTag: "7.16.3"
   replicas: 1
   resources:
     limits:
