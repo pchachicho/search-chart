@@ -223,10 +223,26 @@ api:
       requests:
         cpu: 2
         memory: 2G
+
+
   service:
     name: search-api
     type: ClusterIP
-    annotations: {}
+    annotations:
+      getambassador.io/config: |
+          ---
+          apiVersion: ambassador/v1
+          kind: Mapping
+          name: helx-api
+          prefix: /search-api/
+          rewrite: /
+          service: helx-api:5551
+          cors:
+            origins: "*"
+            methods: POST, OPTIONS
+            headers:
+              - Content-Type
+
     apiPort: "5551"
 config:
   annotation:
@@ -392,3 +408,4 @@ redis-insight:
   enabled: false
   # -- Url should be same as public ingress url
   rootUrl: ""
+

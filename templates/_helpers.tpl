@@ -177,6 +177,8 @@ Environment vars for API pods
   {{- if .Values.api.deployment.extraEnv }}
   {{- toYaml .Values.api.deployment.extraEnv | nindent 10 }}
   {{- end }}
+- name: ROOT_PATH
+  value: /search-api
 {{- end -}}
 
 {{/*
