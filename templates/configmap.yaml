@@ -48,3 +48,13 @@ data:
   tranql_endpoint: "{{.Values.tranql.externalTranql }}"
   {{- end }}
   node_to_queries_enabled: "{{ .Values.config.node_to_queries_enabled }}"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "search.api.web.fullname" . }}-gunicorn-conf
+data:
+  uvicorn_custom.py: |-
+    from uvicorn.workers import UvicornWorker
+    class SubPathWorker(UvicornWorker):
+       CONFIG_KWARGS = {"root_path": "/search-api" }

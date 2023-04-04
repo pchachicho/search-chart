@@ -26,13 +26,21 @@ spec:
         command: [
             "gunicorn",
             "--workers={{ .Values.api.deployment.apiWorkers | default 4 }}",
-            "--name=helx-search",
             "--bind=0.0.0.0:{{ .Values.api.deployment.apiPort }}",
             "--timeout={{ .Values.api.deployment.apiTimeout }}",
             "--log-level={{ .Values.api.deployment.logLevel | default "INFO"}}",
-            "--enable-stdio-inheritance",
-            "--reload",
-            "dug.api:app"
+            "--worker-class",
+            "uvicorn_custom.SubPathWorker",
+            "dug.server:APP"
         ]
         resources:
           {{- toYaml .Values.api.deployment.resources | nindent 10 }}
+        volumeMounts:
+          - name: gunicorn-config
+            mountPath: "/home/dug/dug/uvicorn_custom.py"
+            subPath: "uvicorn_custom.py"
+      volumes:
+      - name: gunicorn-config
+        configMap:
+          name: {{ include "search.api.web.fullname" . }}-gunicorn-conf
+          defaultMode: 0777
