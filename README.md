@@ -1,6 +1,6 @@
 # search
 
-![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.9.8](https://img.shields.io/badge/AppVersion-2.9.8-informational?style=flat-square)
+![Version: 3.0.23](https://img.shields.io/badge/Version-3.0.23-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.9.8](https://img.shields.io/badge/AppVersion-2.9.8-informational?style=flat-square)
 
 A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airflow and Redis.
 
@@ -8,11 +8,11 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 
 | Repository | Name | Version |
 |------------|------|---------|
-|  | airflow | 8.6.1 |
-|  | elasticsearch | 7.16.3 |
-|  | redis | 17.1.2 |
+| @helx-charts | elasticsearch | 7.16.4 |
 | @helx-charts | redis-insight | 0.1.0 |
 | @helx-charts | tranql | 0.4.2 |
+| https://airflow-helm.github.io/charts | airflow | 8.6.1 |
+| https://charts.bitnami.com/bitnami | redis | 17.1.2 |
 
 ## Values
 
@@ -153,9 +153,9 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | api.image.pullPolicy | string | `"IfNotPresent"` |  |
 | api.image.repository | string | `"helxplatform/dug"` |  |
 | api.image.tag | string | `""` |  |
-| api.service.annotations."getambassador.io/config" | string | `"---\napiVersion: ambassador/v1\nkind: Mapping\nname: helx-api\nprefix: /search-api/\nrewrite: /\nservice: helx-api:5551\ncors:\n  origins: \"*\"\n  methods: POST, OPTIONS\n  headers:\n    - Content-Type\n"` |  |
 | api.service.apiPort | string | `"5551"` |  |
 | api.service.name | string | `"search-api"` |  |
+| api.service.port | string | `"5551"` |  |
 | api.service.type | string | `"ClusterIP"` |  |
 | config.annotation.annotator_url | string | `"https://api.monarchinitiative.org/api/nlp/annotate/entities?min_length=4&longest_only=false&include_abbreviation=false&include_acronym=false&include_numbers=false&content="` |  |
 | config.annotation.normalizer_url | string | `"http://nn-web-prod-node-normalization-web-service-root.translator.svc.cluster.local:8080/get_normalized_nodes?conflate=false&curie="` |  |
@@ -185,6 +185,29 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | elasticsearch.resources.requests.cpu | int | `1` |  |
 | elasticsearch.resources.requests.memory | string | `"2G"` |  |
 | elasticsearch.sysctlInitContainer.enabled | bool | `false` |  |
+| fullnameOverride | string | `""` |  |
+| ingress.annotations | object | `{}` |  |
+| ingress.enabled | bool | `false` |  |
+| ingress.hosts[0].host | string | `"chart-example.local"` |  |
+| ingress.labels | object | `{}` |  |
+| ingress.paths[0].name | string | `"ui"` |  |
+| ingress.paths[0].path | string | `"/"` |  |
+| ingress.paths[0].port | int | `80` |  |
+| ingress.paths[0].prepend | bool | `false` |  |
+| ingress.paths[1].name | string | `"web"` |  |
+| ingress.paths[1].path | string | `"/airflow"` |  |
+| ingress.paths[1].port | int | `8080` |  |
+| ingress.paths[1].prepend | bool | `true` |  |
+| ingress.paths[2].name | string | `"tranql"` |  |
+| ingress.paths[2].path | string | `"/tranql"` |  |
+| ingress.paths[2].port | int | `8081` |  |
+| ingress.paths[2].prepend | bool | `true` |  |
+| ingress.rewrite_paths[0].name | string | `"api"` |  |
+| ingress.rewrite_paths[0].path | string | `"/search-api(/|$)(.*)"` |  |
+| ingress.rewrite_paths[0].port | int | `5551` |  |
+| ingress.rewrite_paths[0].prepend | bool | `true` |  |
+| ingress.tls | list | `[]` |  |
+| nameOverride | string | `""` |  |
 | nboost.enabled | bool | `false` |  |
 | persistence.pvcSize | string | `"32Gi"` |  |
 | persistence.storageClass | string | `""` |  |

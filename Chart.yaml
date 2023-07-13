@@ -15,7 +15,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 2.0.1
+version: 3.0.23
 
 appVersion: "2.9.8"
 
@@ -23,14 +23,17 @@ dependencies:
   - name: airflow
     version: "8.6.1"
     condition: airflow.enabled
-#     repository: "https://airflow-helm.github.io/charts"
+    repository: "https://airflow-helm.github.io/charts"
   - name: elasticsearch
-    version: "7.16.3"
-#     repository: "https://helm.elastic.co"
+    version: "7.16.4"
+# workaround for buggy official chart, clone, hand-edit
+#
+#    repository: "https://helm.elastic.co"
+    repository: "@helx-charts"
     condition: elasticsearch.enabled
   - name: redis
     version: "17.1.2"
-#     repository: "https://charts.bitnami.com/bitnami"
+    repository: "https://charts.bitnami.com/bitnami"
     condition: redis.enabled
   - name: tranql
     version: "0.4.2"

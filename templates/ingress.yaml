@@ -1,0 +1,96 @@
+# Search Ingress
+{{- if .Values.ingress.enabled -}}
+{{- $ingressPaths := .Values.ingress.paths }}
+{{- $ingressRewritePaths := .Values.ingress.rewrite_paths }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "search.fullname" . }}
+  labels:
+    {{- include "search.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+  {{- range .Values.ingress.hosts }}
+  - host: {{ .host | quote }}
+    http:
+      paths:
+        {{- range $ingressPaths }}
+        - path: {{ .path }}
+          pathType: Prefix
+          backend:
+            service:
+              {{- if .prepend }}
+              name: {{ include "search.fullname" $ -}}-{{- .name }}
+              {{- else }}
+              name: {{ .name }}
+              {{- end }}
+              port:
+                number: {{ .port }}
+        {{- end }}
+  {{- end }}
+---
+# Search Ingress with rewrite for stripping the paths
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "search.fullname" . }}-rewrite
+  labels:
+    {{- include "search.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+  {{- range .Values.ingress.hosts }}
+  - host: {{ .host | quote }}
+    http:
+      paths:
+        {{- range $ingressRewritePaths }}
+        - path: {{ .path }}
+          pathType: Prefix
+          backend:
+            service:
+              {{- if .prepend }}
+              name: {{ include "search.fullname" $ -}}-{{- .name }}
+              {{- else }}
+              name: {{ .name }}
+              {{- end }}
+              port:
+                number: {{ .port }}
+        {{- end }}
+  {{- end }}
+{{- end }}
