@@ -223,9 +223,10 @@ api:
         memory: 2G
   service:
     name: search-api
-    type: ClusterIP
+    annotations: {}
     apiPort: "5551"
     port: "5551"
+    type: ClusterIP
 config:
   annotation:
     normalizer_url: http://nn-web-prod-node-normalization-web-service-root.translator.svc.cluster.local:8080/get_normalized_nodes?conflate=false&curie=
@@ -259,6 +260,7 @@ elasticsearch:
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
   imageTag: "7.16.3"
+  maxUnavailable: 0
   replicas: 1
   resources:
     limits:

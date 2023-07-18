@@ -1,6 +1,6 @@
 # search
 
-![Version: 3.0.23](https://img.shields.io/badge/Version-3.0.23-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.9.8](https://img.shields.io/badge/AppVersion-2.9.8-informational?style=flat-square)
+![Version: 3.0.24](https://img.shields.io/badge/Version-3.0.24-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.9.8](https://img.shields.io/badge/AppVersion-2.9.8-informational?style=flat-square)
 
 A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airflow and Redis.
 
@@ -8,11 +8,11 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 
 | Repository | Name | Version |
 |------------|------|---------|
-| @helx-charts | elasticsearch | 7.16.4 |
 | @helx-charts | redis-insight | 0.1.0 |
 | @helx-charts | tranql | 0.4.2 |
 | https://airflow-helm.github.io/charts | airflow | 8.6.1 |
 | https://charts.bitnami.com/bitnami | redis | 17.1.2 |
+| https://helm.elastic.co | elasticsearch | 7.16.3 |
 
 ## Values
 
@@ -153,6 +153,7 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | api.image.pullPolicy | string | `"IfNotPresent"` |  |
 | api.image.repository | string | `"helxplatform/dug"` |  |
 | api.image.tag | string | `""` |  |
+| api.service.annotations | object | `{}` |  |
 | api.service.apiPort | string | `"5551"` |  |
 | api.service.name | string | `"search-api"` |  |
 | api.service.port | string | `"5551"` |  |
@@ -179,6 +180,7 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | elasticsearch.extraEnvs[2].name | string | `"LOG4J_FORMAT_MSG_NO_LOOKUPS"` |  |
 | elasticsearch.extraEnvs[2].value | string | `"true"` |  |
 | elasticsearch.imageTag | string | `"7.16.3"` |  |
+| elasticsearch.maxUnavailable | int | `0` |  |
 | elasticsearch.replicas | int | `1` |  |
 | elasticsearch.resources.limits.cpu | int | `1` |  |
 | elasticsearch.resources.limits.memory | string | `"2G"` |  |
