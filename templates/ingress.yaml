@@ -2,18 +2,15 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPaths := .Values.ingress.paths }}
 {{- $ingressRewritePaths := .Values.ingress.rewrite_paths }}
+{{- $releaseName := .Release.Name }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "search.fullname" . }}
   labels:
-    {{- include "search.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    {{- include "search.labels" . | nindent 4 }}  
   annotations:
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
@@ -38,7 +35,7 @@ spec:
           backend:
             service:
               {{- if .prepend }}
-              name: {{ include "search.fullname" $ -}}-{{- .name }}
+              name: {{ $releaseName -}}-{{- .name }}
               {{- else }}
               name: {{ .name }}
               {{- end }}
@@ -53,14 +50,10 @@ kind: Ingress
 metadata:
   name: {{ include "search.fullname" . }}-rewrite
   labels:
-    {{- include "search.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
-  annotations:
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+    {{- include "search.labels" . | nindent 4 }}  
+  annotations:    
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
@@ -85,7 +78,7 @@ spec:
           backend:
             service:
               {{- if .prepend }}
-              name: {{ include "search.fullname" $ -}}-{{- .name }}
+              name: {{ $releaseName }}-{{- .name }}
               {{- else }}
               name: {{ .name }}
               {{- end }}

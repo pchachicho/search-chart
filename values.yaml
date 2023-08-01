@@ -261,22 +261,24 @@ elasticsearch:
       value: "true"
   imageTag: "7.16.3"
   maxUnavailable: 0
-  replicas: 1
+  replicas: 3
   resources:
     limits:
       cpu: 1
-      memory: 2G
+      memory: 4G
     requests:
       cpu: 1
-      memory: 2G
+      memory: 4G
   sysctlInitContainer:
     enabled: false
 fullnameOverride: ""
 ingress:
   enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations: 
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
   hosts:
     - host: chart-example.local
   labels: {}
@@ -284,7 +286,7 @@ ingress:
     - path: "/"
       name: ui
       port: 80
-      prepend: false
+      prepend: true
     - path: "/airflow"
       name: web
       port: 8080
@@ -423,3 +425,23 @@ redis-insight:
   enabled: false
   # -- Url should be same as public ingress url
   rootUrl: ""
+
+ui:
+  enabled: False
+  config:
+    brand_name: heal
+    search:
+      enabled: "true"
+      ## Escaped search endpoint address eg: https:\/\/example.com\/search-api
+      url: ""
+    tranql_enabled: "true"
+    ## Escaped tranql endpoint address eg: https:\/\/example.com\/tranql
+    tranql_url: ""
+    workspaces:
+      # disable workspaces
+      enabled: "false"
+    hidden_result_tabs: "cdes"
+  image:
+    pullPolicy: Always
+    repository: containers.renci.org/helxplatform/helx-ui
+    tag: v5.0.0
