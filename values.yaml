@@ -429,7 +429,7 @@ redis-insight:
 ui:
   enabled: False
   config:
-    brand_name: heal
+    brand_name: ""
     search:
       enabled: "true"
       ## Escaped search endpoint address eg: https:\/\/example.com\/search-api
