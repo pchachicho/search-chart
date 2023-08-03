@@ -203,14 +203,14 @@ airflow:
 api:
   replicas: 4
   image:
-    repository: helxplatform/dug
-    tag: ""
+    repository: containers.renci.org/helxplatform/dug
+    tag: "latest"
     pullPolicy: Always
   appName: webserver
   debug: false
   deployment:
     apiPort: 5551
-    apiWorkers: 4
+    apiWorkers: 8
     apiTimeout: 10
     extraEnv: []
     logLevel: INFO
@@ -218,10 +218,10 @@ api:
     resources:
       limits:
         cpu: 2
-        memory: 2G
+        memory: 1G
       requests:
         cpu: 2
-        memory: 2G
+        memory: 1G
   service:
     name: search-api
     annotations: {}
