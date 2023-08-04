@@ -3,6 +3,11 @@
 {{- $ingressPaths := .Values.ingress.paths }}
 {{- $ingressRewritePaths := .Values.ingress.rewrite_paths }}
 {{- $releaseName := .Release.Name }}
+{{ if .Values.ingress.basicAuth.enabled }}
+   {{ $_ := set .Values.ingress.annotations "nginx.ingress.kubernetes.io/auth-type" "basic" }}
+   {{ $secretName := printf "%s-htpasswd" .Release.Name}}
+   {{ $_ := set .Values.ingress.annotations "nginx.ingress.kubernetes.io/auth-secret" $secretName}}
+{{ end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

@@ -276,6 +276,10 @@ elasticsearch:
 
 ingress:
   enabled: false
+  basicAuth:
+    enabled: false
+    username: ""
+    password: ""
   annotations: 
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
