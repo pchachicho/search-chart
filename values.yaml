@@ -204,7 +204,7 @@ api:
   replicas: 4
   image:
     repository: containers.renci.org/helxplatform/dug
-    tag: "latest"
+    tag: ""
     pullPolicy: Always
   appName: webserver
   debug: false
