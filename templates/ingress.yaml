@@ -8,6 +8,7 @@
    {{ $secretName := printf "%s-htpasswd" .Release.Name}}
    {{ $_ := set .Values.ingress.annotations "nginx.ingress.kubernetes.io/auth-secret" $secretName}}
 {{ end }}
+{{- $pathType := .Values.ingress.pathType }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -19,6 +20,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{ if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  {{ end }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -36,7 +40,7 @@ spec:
       paths:
         {{- range $ingressPaths }}
         - path: {{ .path }}
-          pathType: Prefix
+          pathType: {{ $pathType }}
           backend:
             service:
               {{- if .prepend }}
@@ -62,6 +66,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{ if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  {{ end }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -79,7 +86,7 @@ spec:
       paths:
         {{- range $ingressRewritePaths }}
         - path: {{ .path }}
-          pathType: Prefix
+          pathType: {{ $pathType }}
           backend:
             service:
               {{- if .prepend }}

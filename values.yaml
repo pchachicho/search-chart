@@ -275,6 +275,8 @@ elasticsearch:
     enabled: false
 
 ingress:
+  pathType: Prefix
+  className: ""
   enabled: false
   basicAuth:
     enabled: false
