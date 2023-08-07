@@ -15,9 +15,9 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 3.0.24
+version: 4.0.0
 
-appVersion: "2.9.8"
+appVersion: "2.10.2"
 
 dependencies:
   - name: airflow
@@ -39,4 +39,8 @@ dependencies:
   - name: redis-insight
     version: "0.1.0"
     condition: redis-insight.enabled
+    repository: "@helx-charts"
+  - name: ui
+    condition: ui.enabled
+    version: "^1.0.0"
     repository: "@helx-charts"

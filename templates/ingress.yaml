@@ -2,21 +2,27 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPaths := .Values.ingress.paths }}
 {{- $ingressRewritePaths := .Values.ingress.rewrite_paths }}
+{{- $releaseName := .Release.Name }}
+{{ if .Values.ingress.basicAuth.enabled }}
+   {{ $_ := set .Values.ingress.annotations "nginx.ingress.kubernetes.io/auth-type" "basic" }}
+   {{ $secretName := printf "%s-htpasswd" .Release.Name}}
+   {{ $_ := set .Values.ingress.annotations "nginx.ingress.kubernetes.io/auth-secret" $secretName}}
+{{ end }}
+{{- $pathType := .Values.ingress.pathType }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "search.fullname" . }}
   labels:
-    {{- include "search.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    {{- include "search.labels" . | nindent 4 }}  
   annotations:
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{ if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  {{ end }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -34,11 +40,11 @@ spec:
       paths:
         {{- range $ingressPaths }}
         - path: {{ .path }}
-          pathType: Prefix
+          pathType: {{ $pathType }}
           backend:
             service:
               {{- if .prepend }}
-              name: {{ include "search.fullname" $ -}}-{{- .name }}
+              name: {{ $releaseName -}}-{{- .name }}
               {{- else }}
               name: {{ .name }}
               {{- end }}
@@ -53,17 +59,16 @@ kind: Ingress
 metadata:
   name: {{ include "search.fullname" . }}-rewrite
   labels:
-    {{- include "search.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
-  annotations:
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+    {{- include "search.labels" . | nindent 4 }}  
+  annotations:    
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{ if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  {{ end }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -81,11 +86,11 @@ spec:
       paths:
         {{- range $ingressRewritePaths }}
         - path: {{ .path }}
-          pathType: Prefix
+          pathType: {{ $pathType }}
           backend:
             service:
               {{- if .prepend }}
-              name: {{ include "search.fullname" $ -}}-{{- .name }}
+              name: {{ $releaseName }}-{{- .name }}
               {{- else }}
               name: {{ .name }}
               {{- end }}
