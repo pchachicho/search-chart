@@ -1,6 +1,6 @@
 # search
 
-![Version: 1.10.0](https://img.shields.io/badge/Version-1.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.9.0](https://img.shields.io/badge/AppVersion-2.9.0-informational?style=flat-square)
+![Version: 3.0.24](https://img.shields.io/badge/Version-3.0.24-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.9.8](https://img.shields.io/badge/AppVersion-2.9.8-informational?style=flat-square)
 
 A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airflow and Redis.
 
@@ -10,9 +10,9 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 |------------|------|---------|
 | @helx-charts | redis-insight | 0.1.0 |
 | @helx-charts | tranql | 0.4.2 |
-| https://airflow-helm.github.io/charts | airflow | 8.1.3 |
+| https://airflow-helm.github.io/charts | airflow | 8.6.1 |
 | https://charts.bitnami.com/bitnami | redis | 17.1.2 |
-| https://helm.elastic.co | elasticsearch | 7.16 |
+| https://helm.elastic.co | elasticsearch | 7.16.3 |
 
 ## Values
 
@@ -24,6 +24,8 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | airflow.airflow.config.AIRFLOW__SCHEDULER__SCHEDULE_AFTER_TASK_EXECUTION | string | `"FALSE"` |  |
 | airflow.airflow.config.AIRFLOW__WEBSERVER__BASE_URL | string | `""` |  |
 | airflow.airflow.configSecretsName | string | `"airflow-config-secrets"` |  |
+| airflow.airflow.dbMigrations.enabled | bool | `true` |  |
+| airflow.airflow.dbMigrations.runAsJob | bool | `true` |  |
 | airflow.airflow.executor | string | `"KubernetesExecutor"` |  |
 | airflow.airflow.extraEnv[0].name | string | `"ROGER_ANNOTATION_NORMALIZER"` |  |
 | airflow.airflow.extraEnv[0].valueFrom.configMapKeyRef.key | string | `"normalizer_url"` |  |
@@ -96,8 +98,8 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | airflow.airflow.extraVolumes[0].name | string | `"airflow-data"` |  |
 | airflow.airflow.extraVolumes[0].persistentVolumeClaim.claimName | string | `"search-data"` |  |
 | airflow.airflow.image.pullPolicy | string | `"Always"` |  |
-| airflow.airflow.image.repository | string | `"helxplatform/roger"` |  |
-| airflow.airflow.image.tag | string | `"0.6.0"` |  |
+| airflow.airflow.image.repository | string | `"containers.renci.org/helxplatform/roger"` |  |
+| airflow.airflow.image.tag | string | `"latest"` |  |
 | airflow.airflow.kubernetesPodTemplate.resources.limits.cpu | int | `2` |  |
 | airflow.airflow.kubernetesPodTemplate.resources.limits.ephemeral-storage | string | `"4G"` |  |
 | airflow.airflow.kubernetesPodTemplate.resources.limits.memory | string | `"16G"` |  |
@@ -121,12 +123,14 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | airflow.logs.persistence.enabled | bool | `true` |  |
 | airflow.logs.persistence.size | string | `"5Gi"` |  |
 | airflow.logs.persistence.storageClass | string | `""` |  |
+| airflow.pgbouncer.enabled | bool | `false` |  |
 | airflow.redis.enabled | bool | `false` |  |
+| airflow.scheduler.logCleanup.enabled | bool | `false` |  |
 | airflow.scheduler.resources.limits.cpu | int | `2` |  |
 | airflow.scheduler.resources.limits.memory | string | `"4G"` |  |
 | airflow.scheduler.resources.requests.cpu | int | `2` |  |
 | airflow.scheduler.resources.requests.memory | string | `"4G"` |  |
-| airflow.web.extraPipPackages[0] | string | `"Flask-AppBuilder~=3.2.0"` |  |
+| airflow.triggerer.enabled | bool | `false` |  |
 | airflow.web.resources.limits.cpu | int | `3` |  |
 | airflow.web.resources.limits.ephemeral-storage | string | `"1G"` |  |
 | airflow.web.resources.limits.memory | string | `"4G"` |  |
@@ -152,13 +156,14 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | api.service.annotations | object | `{}` |  |
 | api.service.apiPort | string | `"5551"` |  |
 | api.service.name | string | `"search-api"` |  |
+| api.service.port | string | `"5551"` |  |
 | api.service.type | string | `"ClusterIP"` |  |
 | config.annotation.annotator_url | string | `"https://api.monarchinitiative.org/api/nlp/annotate/entities?min_length=4&longest_only=false&include_abbreviation=false&include_acronym=false&include_numbers=false&content="` |  |
 | config.annotation.normalizer_url | string | `"http://nn-web-prod-node-normalization-web-service-root.translator.svc.cluster.local:8080/get_normalized_nodes?conflate=false&curie="` |  |
 | config.annotation.synonymizer_url | string | `"https://onto.renci.org/synonyms/"` |  |
 | config.data_source | string | `"stars"` |  |
 | config.input_sets | string | `"bdc-dbGaP,topmed"` |  |
-| config.kgx_data_sets | string | `"baseline-graph,sparc-kgx"` |  |
+| config.kgx_data_sets | string | `"baseline-graph,cde-graph"` |  |
 | config.node_to_queries_enabled | string | `"false"` |  |
 | config.s3.access_key | string | `""` |  |
 | config.s3.bucket | string | `""` |  |
@@ -174,13 +179,37 @@ A Helm chart for Helx Search components. This chart installs Dug, TranQL , Airfl
 | elasticsearch.extraEnvs[1].valueFrom.secretKeyRef.name | string | `"search-elastic-secret"` |  |
 | elasticsearch.extraEnvs[2].name | string | `"LOG4J_FORMAT_MSG_NO_LOOKUPS"` |  |
 | elasticsearch.extraEnvs[2].value | string | `"true"` |  |
-| elasticsearch.imageTag | string | `"7.16.1"` |  |
+| elasticsearch.imageTag | string | `"7.16.3"` |  |
+| elasticsearch.maxUnavailable | int | `0` |  |
 | elasticsearch.replicas | int | `1` |  |
 | elasticsearch.resources.limits.cpu | int | `1` |  |
 | elasticsearch.resources.limits.memory | string | `"2G"` |  |
 | elasticsearch.resources.requests.cpu | int | `1` |  |
 | elasticsearch.resources.requests.memory | string | `"2G"` |  |
 | elasticsearch.sysctlInitContainer.enabled | bool | `false` |  |
+| fullnameOverride | string | `""` |  |
+| ingress.annotations | object | `{}` |  |
+| ingress.enabled | bool | `false` |  |
+| ingress.hosts[0].host | string | `"chart-example.local"` |  |
+| ingress.labels | object | `{}` |  |
+| ingress.paths[0].name | string | `"ui"` |  |
+| ingress.paths[0].path | string | `"/"` |  |
+| ingress.paths[0].port | int | `80` |  |
+| ingress.paths[0].prepend | bool | `false` |  |
+| ingress.paths[1].name | string | `"web"` |  |
+| ingress.paths[1].path | string | `"/airflow"` |  |
+| ingress.paths[1].port | int | `8080` |  |
+| ingress.paths[1].prepend | bool | `true` |  |
+| ingress.paths[2].name | string | `"tranql"` |  |
+| ingress.paths[2].path | string | `"/tranql"` |  |
+| ingress.paths[2].port | int | `8081` |  |
+| ingress.paths[2].prepend | bool | `true` |  |
+| ingress.rewrite_paths[0].name | string | `"api"` |  |
+| ingress.rewrite_paths[0].path | string | `"/search-api(/|$)(.*)"` |  |
+| ingress.rewrite_paths[0].port | int | `5551` |  |
+| ingress.rewrite_paths[0].prepend | bool | `true` |  |
+| ingress.tls | list | `[]` |  |
+| nameOverride | string | `""` |  |
 | nboost.enabled | bool | `false` |  |
 | persistence.pvcSize | string | `"32Gi"` |  |
 | persistence.storageClass | string | `""` |  |

@@ -1,9 +1,9 @@
+fullnameOverride: ""
+nameOverride: ""
 airflow:
   enabled: true
   pgbouncer:
     enabled: false
-
-
   airflow:
     dbMigrations:
       enabled: true
@@ -146,11 +146,9 @@ airflow:
     kubernetesPodTemplate:
       resources:
         limits:
-          ephemeral-storage: 4G
           cpu: 2
           memory: 16G
         requests:
-          ephemeral-storage: 4G
           cpu: 2
           memory: 16G
     usersUpdate: true
@@ -203,15 +201,16 @@ airflow:
   triggerer:
     enabled: false
 api:
+  replicas: 4
   image:
-    repository: helxplatform/dug
+    repository: containers.renci.org/helxplatform/dug
     tag: ""
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   appName: webserver
   debug: false
   deployment:
     apiPort: 5551
-    apiWorkers: 4
+    apiWorkers: 8
     apiTimeout: 10
     extraEnv: []
     logLevel: INFO
@@ -219,21 +218,22 @@ api:
     resources:
       limits:
         cpu: 2
-        memory: 2G
+        memory: 1G
       requests:
         cpu: 2
-        memory: 2G
+        memory: 1G
   service:
     name: search-api
-    type: ClusterIP
     annotations: {}
     apiPort: "5551"
+    port: "5551"
+    type: ClusterIP
 config:
   annotation:
-    normalizer_url: http://nn-web-prod-node-normalization-web-service-root.translator.svc.cluster.local:8080/get_normalized_nodes?conflate=false&curie=
+    normalizer_url: https://nodenormalization-sri.renci.org/get_normalized_nodes?conflate=false&curie=
     annotator_url: https://api.monarchinitiative.org/api/nlp/annotate/entities?min_length=4&longest_only=false&include_abbreviation=false&include_acronym=false&include_numbers=false&content=
     synonymizer_url: https://onto.renci.org/synonyms/
-  input_sets: "bdc-dbGaP,topmed"
+  input_sets: "bdc:v2.0,topmed:v2.0"
   data_source: "stars"
   kgx_data_sets: "baseline-graph,cde-graph"
   node_to_queries_enabled: "false"
@@ -246,7 +246,8 @@ elasticsearch:
   # default, maybe we ought to increase this as size increases
   # esJavaOpts: "-Xmx1g -Xms1g"
   enabled: true
-  esJavaOpts: "-Xmx1g -Xms1g -Dlog4j2.disable.jmx=true -Dlog4j2.formatMsgNoLookups=true"
+  esJavaOpts: "-Xmx6g -Xms6g -Dlog4j2.disable.jmx=true -Dlog4j2.formatMsgNoLookups=true"
+  clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
   extraEnvs:
     - name: ELASTIC_PASSWORD
       valueFrom:
@@ -261,18 +262,57 @@ elasticsearch:
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
   imageTag: "7.16.3"
-  replicas: 1
+  maxUnavailable: 0
+  replicas: 3
   resources:
     limits:
       cpu: 1
-      memory: 2G
+      memory: 8G
     requests:
       cpu: 1
-      memory: 2G
+      memory: 8G
   sysctlInitContainer:
     enabled: false
-nboost:
+
+ingress:
+  pathType: Prefix
+  className: ""
   enabled: false
+  basicAuth:
+    enabled: false
+    username: ""
+    password: ""
+  annotations: 
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+  hosts:
+    - host: chart-example.local
+  labels: {}
+  paths:
+    - path: "/"
+      name: ui
+      port: 80
+      prepend: true
+    - path: "/airflow"
+      name: web
+      port: 8080
+      prepend: true
+    - path: "/tranql"
+      name: tranql
+      prepend: true
+      port: 8081
+  rewrite_paths:
+    - path: "/search-api(/|$)(.*)"
+      name: api
+      port: 5551
+      prepend: true
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
 persistence:
   storageClass: ""
   pvcSize: 32Gi
@@ -324,7 +364,7 @@ redis:
     autoscaling:
       enabled: true
       minReplicas: 1
-      maxReplicas: 2
+      maxReplicas: 1
       targetCPU: 100
     persistence:
       size: 24G
@@ -386,9 +426,28 @@ tranql:
       memory: 2G
   redis:
     enabled: false
-
 redis-insight:
   # -- Enable/Disable Redis UI
   enabled: false
   # -- Url should be same as public ingress url
   rootUrl: ""
+
+ui:
+  enabled: False
+  config:
+    brand_name: ""
+    search:
+      enabled: "true"
+      ## Escaped search endpoint address eg: https:\/\/example.com\/search-api
+      url: ""
+    tranql_enabled: "true"
+    ## Escaped tranql endpoint address eg: https:\/\/example.com\/tranql
+    tranql_url: ""
+    workspaces:
+      # disable workspaces
+      enabled: "false"
+    hidden_result_tabs: "cdes"
+  image:
+    pullPolicy: Always
+    repository: containers.renci.org/helxplatform/helx-ui
+    tag: v5.0.0
