@@ -27,6 +27,13 @@ airflow:
     configSecretsName: airflow-config-secrets
     executor: KubernetesExecutor
     extraEnv:
+      - name: ROGER_LAKEFS_ENABLED
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: lakefs_enabled
+      - name: ROGER_LAKEFS_CONFIG__PATH
+        value: "/opt/airflow/share/lakefs_config.yaml"
       - name: ROGER_ANNOTATION_NORMALIZER
         valueFrom:
           configMapKeyRef:
@@ -139,10 +146,17 @@ airflow:
     extraVolumeMounts:
       - name: airflow-data
         mountPath: /opt/airflow/share/data
+      - name: lakefs-config
+        mountPath: /opt/airflow/share/lakefs_config.yaml
+        subPath: lakefs_config.yaml
     extraVolumes:
       - name: airflow-data
         persistentVolumeClaim:
           claimName: search-data
+      - name: lakefs-config
+        configMap: 
+          optional: true
+          name: lakefs-config
     kubernetesPodTemplate:
       resources:
         limits:

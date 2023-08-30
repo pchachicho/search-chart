@@ -58,3 +58,10 @@ data:
     from uvicorn.workers import UvicornWorker
     class SubPathWorker(UvicornWorker):
        CONFIG_KWARGS = {"root_path": "/search-api" }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lakefs-config
+data:
+  enabled: {{ .Values.config.lakefs.enabled }}
