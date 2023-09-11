@@ -352,14 +352,14 @@ redis:
   usePassword: true
   master:
     persistence:
-      size: 24G
+      size: 40Gi
     resources:
       limits:
         cpu: 2
-        memory: 32Gi
+        memory: 40Gi
       requests:
         cpu: 1
-        memory: 12Gi
+        memory: 40Gi
     command: ""
     readinessProbe:
       enabled: true
@@ -389,7 +389,7 @@ redis:
       maxReplicas: 1
       targetCPU: 100
     persistence:
-      size: 24G
+      size: 40G
     resources:
       limits:
         cpu: 2
