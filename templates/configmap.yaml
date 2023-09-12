@@ -49,6 +49,10 @@ data:
   {{- end }}
   node_to_queries_enabled: "{{ .Values.config.node_to_queries_enabled }}"
   element_mappings: "{{ .Values.config.element_mappings }}"
+  lakefs_enabled: {{ .Values.config.lakefs.enabled | quote }}
+  lakefs_access_key_id: {{ .Values.config.lakefs.access_key }}
+  lakefs_secret_access_key: {{ .Values.config.lakefs.secret_key }}
+  lakefs_host: {{ .Values.config.lakefs.host }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -59,10 +63,4 @@ data:
     from uvicorn.workers import UvicornWorker
     class SubPathWorker(UvicornWorker):
        CONFIG_KWARGS = {"root_path": "/search-api" }
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: lakefs-config
-data:
-  enabled: {{ .Values.config.lakefs.enabled }}
+

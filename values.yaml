@@ -27,13 +27,26 @@ airflow:
     configSecretsName: airflow-config-secrets
     executor: KubernetesExecutor
     extraEnv:
-      - name: ROGER_LAKEFS_ENABLED
+      - name: ROGER_LAKEFS__CONFIG_ENABLED
         valueFrom:
           configMapKeyRef:
             name: search-data-config
             key: lakefs_enabled
-      - name: ROGER_LAKEFS_CONFIG__PATH
-        value: "/opt/airflow/share/lakefs_config.yaml"
+      - name: ROGER_LAKEFS__CONFIG_HOST
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: lakefs_host
+      - name: ROGER_LAKEFS__CONFIG_ACCESS__KEY__ID
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: lakefs_access_key_id
+      - name: ROGER_LAKEFS__CONFIG_SECRET__ACCESS__KEY
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: lakefs_secret_access_key
       - name: ROGER_ANNOTATION_NORMALIZER
         valueFrom:
           configMapKeyRef:
@@ -262,6 +275,11 @@ config:
   s3:
     host: ""
     bucket: ""
+    access_key: ""
+    secret_key: ""
+  lakefs:
+    enable: False
+    host: ""
     access_key: ""
     secret_key: ""
 elasticsearch:
