@@ -23,24 +23,38 @@ spec:
         env: {{ include "search.api.web.deploymentEnv" . | nindent 10 }}
         ports:
           - containerPort: {{ .Values.api.deployment.apiPort }}
-        command: [
-            "gunicorn",
-            "--workers={{ .Values.api.deployment.apiWorkers | default 4 }}",
-            "--bind=0.0.0.0:{{ .Values.api.deployment.apiPort }}",
-            "--timeout={{ .Values.api.deployment.apiTimeout }}",
-            "--log-level={{ .Values.api.deployment.logLevel | default "INFO"}}",
-            "--worker-class",
-            "uvicorn_custom.SubPathWorker",
-            "dug.server:APP"
-        ]
+        command: 
+        - /bin/sh
+        tty: True
+        stdin: True
+        # command: [
+        #     "gunicorn",
+        #     "--workers={{ .Values.api.deployment.apiWorkers | default 4 }}",
+        #     "--bind=0.0.0.0:{{ .Values.api.deployment.apiPort }}",
+        #     "--timeout={{ .Values.api.deployment.apiTimeout }}",
+        #     "--log-level={{ .Values.api.deployment.logLevel | default "INFO"}}",
+        #     "--worker-class",
+        #     "uvicorn_custom.SubPathWorker",
+        #     "dug.server:APP"
+        # ]
         resources:
           {{- toYaml .Values.api.deployment.resources | nindent 10 }}
         volumeMounts:
           - name: gunicorn-config
             mountPath: "/home/dug/dug/uvicorn_custom.py"
             subPath: "uvicorn_custom.py"
+          - name: elastic-ca
+            mountPath: "/usr/lib/ssl/certs/tls.crt"
+            subPath: "tls.crt"
+          - name: elastic-ca
+            mountPath: "/usr/lib/ssl/certs/ca.crt"
+            subPath: "ca.crt"
       volumes:
       - name: gunicorn-config
         configMap:
           name: {{ include "search.api.web.fullname" . }}-gunicorn-conf
+          defaultMode: 0777
+      - name: elastic-ca
+        secret:
+          secretName: {{ .Values.api.certificateSecretName }}
           defaultMode: 0777

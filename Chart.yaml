@@ -25,7 +25,7 @@ dependencies:
     condition: airflow.enabled
     repository: "https://airflow-helm.github.io/charts"
   - name: elasticsearch
-    version: "7.16.3"
+    version: "8.5.1"
     repository: "https://helm.elastic.co"
     condition: elasticsearch.enabled
   - name: redis

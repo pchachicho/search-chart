@@ -207,6 +207,8 @@ airflow:
     enabled: false
 api:
   replicas: 4
+  elasticScheme: "https"
+  certificateSecretName: "elasticsearch-master-certs"
   image:
     repository: containers.renci.org/helxplatform/dug
     tag: ""
@@ -223,10 +225,10 @@ api:
     resources:
       limits:
         cpu: 2
-        memory: 1G
+        memory: 2Gi
       requests:
-        cpu: 2
-        memory: 1G
+        cpu: 500m
+        memory: 1Gi
   service:
     name: search-api
     annotations: {}
@@ -269,16 +271,18 @@ elasticsearch:
           key: username
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
-  imageTag: "7.16.3"
+  # imageTag: "7.16.3"
   maxUnavailable: 0
   replicas: 3
   resources:
     limits:
       cpu: 1
       memory: 8G
+      ephemeral-storage: 256Mi
     requests:
       cpu: 1
       memory: 8G
+      ephemeral-storage: 256Mi
   sysctlInitContainer:
     enabled: false
 
