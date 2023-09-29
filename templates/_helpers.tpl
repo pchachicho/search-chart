@@ -160,7 +160,17 @@ Environment vars for API pods
 - name: ELASTIC_API_SCHEME
   value: {{ .Values.api.elasticScheme }}
 - name: ELASTIC_CA_PATH
-  value: "/mnt/ca/cafile.pem"
+  value: "{{ .Values.api.certMountPath }}"
+- name: ELASTIC_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: search-elastic-secret
+      key: password
+- name: ELASTIC_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: search-elastic-secret
+      key: username
 {{- if .Values.redis.enabled }}
 - name: REDIS_HOST
   value: {{ include "search.redis.fullname" . }}-master

@@ -208,7 +208,9 @@ airflow:
 api:
   replicas: 4
   elasticScheme: "https"
-  certificateSecretName: "elasticsearch-master-certs"
+  # elasticAuthSecretName: "elasticsearch-master-credentials"
+  # certificateSecretName: "elasticsearch-master-certs"
+  certMountPath: "/usr/lib/ssl/certs/ca_elastic.crt"
   image:
     repository: containers.renci.org/helxplatform/dug
     tag: ""
