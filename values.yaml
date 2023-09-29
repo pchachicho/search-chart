@@ -337,10 +337,8 @@ redis:
   clusterDomain: cluster.local
   enabled: true
   image:
-    repository: redislabs/redisgraph
-    tag: 2.8.4
-  persistence:
-    existingClaim: "redis-data"
+    repository: falkordb/falkordb
+    tag: edge
   usePassword: true
   master:
     persistence:
@@ -367,7 +365,7 @@ redis:
       enabled: false
     extraFlags:
       - "--loadmodule"
-      - "/usr/lib/redis/modules/redisgraph.so"
+      - "/FalkorDB/bin/linux-x64-release/src/falkordb.so"
       - "THREAD_COUNT"
       - "8"
       - "OMP_THREAD_COUNT"
