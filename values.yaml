@@ -86,12 +86,16 @@ airflow:
         valueFrom:
           secretKeyRef:
             name: search-elastic-secret
-            key: password
+            key: password      
       - name: ROGER_ELASTICSEARCH_USERNAME
         valueFrom:
           secretKeyRef:
             name: search-elastic-secret
             key: username
+      - name: ROGER_ELASTICSEARCH_SCHEME
+        value: "https"
+      - name: ROGER_ELASTICSEARCH_CA__PATH
+        value: "/opt/certs/es.crt"          
       - name: ROGER_REDISGRAPH_HOST
         valueFrom:
           configMapKeyRef:
@@ -164,17 +168,17 @@ airflow:
     extraVolumeMounts:
       - name: airflow-data
         mountPath: /opt/airflow/share/data
-      - name: lakefs-config
-        mountPath: /opt/airflow/share/lakefs_config.yaml
-        subPath: lakefs_config.yaml
+      - name: es-cert
+        mountPath: "/opt/certs/es.crt"
+        subPath: "ca.crt"
     extraVolumes:
       - name: airflow-data
         persistentVolumeClaim:
           claimName: search-data
-      - name: lakefs-config
-        configMap: 
-          optional: true
-          name: lakefs-config
+      - name: es-cert
+        secret:
+          secretName: elasticsearch-master-certs
+          defaultMode: 0777
     kubernetesPodTemplate:
       resources:
         limits:
@@ -234,6 +238,10 @@ airflow:
     enabled: false
 api:
   replicas: 4
+  elasticScheme: "https"
+  # elasticAuthSecretName: "elasticsearch-master-credentials"
+  # certificateSecretName: "elasticsearch-master-certs"
+  certMountPath: "/usr/lib/ssl/certs/ca_elastic.crt"
   image:
     repository: containers.renci.org/helxplatform/dug
     tag: ""
@@ -250,10 +258,10 @@ api:
     resources:
       limits:
         cpu: 2
-        memory: 1G
+        memory: 2Gi
       requests:
-        cpu: 2
-        memory: 1G
+        cpu: 500m
+        memory: 1Gi
   service:
     name: search-api
     annotations: {}
@@ -262,9 +270,9 @@ api:
     type: ClusterIP
 config:
   annotation:
-    normalizer_url: https://nodenormalization-sri.renci.org/get_normalized_nodes?conflate=false&curie=
+    normalizer_url: https://nodenormalization-sri.renci.org/get_normalized_nodes?conflate=false&description=true&curie=
     annotator_url: https://api.monarchinitiative.org/api/nlp/annotate/entities?min_length=4&longest_only=false&include_abbreviation=false&include_acronym=false&include_numbers=false&content=
-    synonymizer_url: https://onto.renci.org/synonyms/
+    synonymizer_url: https://name-resolution-sri.renci.org/reverse_lookup
   input_sets: "bdc:v2.0,topmed:v2.0"
   data_source: "stars"
   kgx_data_sets: "baseline-graph,cde-graph"
@@ -288,6 +296,8 @@ elasticsearch:
   enabled: true
   esJavaOpts: "-Xmx6g -Xms6g -Dlog4j2.disable.jmx=true -Dlog4j2.formatMsgNoLookups=true"
   clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
+  secret:
+    enabled: False
   extraEnvs:
     - name: ELASTIC_PASSWORD
       valueFrom:
@@ -301,16 +311,18 @@ elasticsearch:
           key: username
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
-  imageTag: "7.16.3"
+  # imageTag: "7.16.3"
   maxUnavailable: 0
   replicas: 3
   resources:
     limits:
       cpu: 1
       memory: 8G
+      ephemeral-storage: 256Mi
     requests:
       cpu: 1
       memory: 8G
+      ephemeral-storage: 256Mi
   sysctlInitContainer:
     enabled: false
 
@@ -363,10 +375,8 @@ redis:
   clusterDomain: cluster.local
   enabled: true
   image:
-    repository: redislabs/redisgraph
-    tag: 2.8.4
-  persistence:
-    existingClaim: "redis-data"
+    repository: falkordb/falkordb
+    tag: edge
   usePassword: true
   master:
     persistence:
@@ -393,7 +403,7 @@ redis:
       enabled: false
     extraFlags:
       - "--loadmodule"
-      - "/usr/lib/redis/modules/redisgraph.so"
+      - "/FalkorDB/bin/linux-x64-release/src/falkordb.so"
       - "THREAD_COUNT"
       - "8"
       - "OMP_THREAD_COUNT"

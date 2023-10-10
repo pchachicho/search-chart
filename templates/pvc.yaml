@@ -14,23 +14,3 @@ spec:
     requests:
       storage: {{ .Values.persistence.pvcSize }}
 {{ end }}
----
-{{- if not (lookup "v1" "PersistentVolumeClaim" .Release.Namespace ( .Values.redis.persistence.existingClaim )) }}
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Values.redis.persistence.existingClaim }}
-  annotations:
-    # makes sure that pvc is created before job.
-    "helm.sh/hook": pre-install,pre-upgrade
-    # makes sure that pvc is created before job.
-    "helm.sh/hook-weight": "-6"
-    "helm.sh/resource-policy": keep
-spec:
-  storageClassName: {{ .Values.persistence.storageClass }}
-  resources:
-    requests:
-      storage: 10Gi
-  accessModes:
-    - ReadWriteMany
-{{ end }}

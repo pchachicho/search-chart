@@ -23,6 +23,10 @@ spec:
         env: {{ include "search.api.web.deploymentEnv" . | nindent 10 }}
         ports:
           - containerPort: {{ .Values.api.deployment.apiPort }}
+        # command: 
+        # - /bin/sh
+        # tty: True
+        # stdin: True
         command: [
             "gunicorn",
             "--workers={{ .Values.api.deployment.apiWorkers | default 4 }}",
@@ -39,8 +43,15 @@ spec:
           - name: gunicorn-config
             mountPath: "/home/dug/dug/uvicorn_custom.py"
             subPath: "uvicorn_custom.py"
+          - name: elastic-ca
+            mountPath: "{{ .Values.api.certMountPath }}"
+            subPath: "ca.crt"
       volumes:
       - name: gunicorn-config
         configMap:
           name: {{ include "search.api.web.fullname" . }}-gunicorn-conf
+          defaultMode: 0777
+      - name: elastic-ca
+        secret:
+          secretName: {{ include "search.api.elasticsearch.uname" . }}-certs
           defaultMode: 0777
