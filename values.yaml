@@ -402,11 +402,13 @@ redis:
         memory: 12Gi
     extraFlags:
       - "--loadmodule"
-      - "/usr/lib/redis/modules/redisgraph.so"
+      - "/FalkorDB/bin/linux-x64-release/src/falkordb.so"
       - "THREAD_COUNT"
       - "8"
       - "OMP_THREAD_COUNT"
       - "16"
+      - "--appendonly"
+      - "no"
     readinessProbe:
       enabled: true
       # to make it available ASAP
