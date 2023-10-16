@@ -19,7 +19,7 @@ airflow:
       pullPolicy: Always
     config:
       AIRFLOW__CORE__LOAD_EXAMPLES: "FALSE"
-      AIRFLOW__CORE__LOGGING_LEVEL: "INFO"
+      AIRFLOW__LOGGING_LEVEL: "INFO"
       AIRFLOW__SCHEDULER__SCHEDULE_AFTER_TASK_EXECUTION: "FALSE"
       # Provide http://<URL to nginx >/<web-prefix>
       AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "TRUE"
@@ -311,7 +311,7 @@ elasticsearch:
           key: username
     - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
       value: "true"
-  # imageTag: "7.16.3"
+  imageTag: "8.5.2"
   maxUnavailable: 0
   replicas: 3
   resources:
