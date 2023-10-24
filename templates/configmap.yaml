@@ -53,6 +53,8 @@ data:
   lakefs_access_key_id: {{ .Values.config.lakefs.access_key }}
   lakefs_secret_access_key: {{ .Values.config.lakefs.secret_key }}
   lakefs_host: {{ .Values.config.lakefs.host }}
+  lakefs_branch: {{ .Values.config.lakefs.branch }}
+  lakefs_repo: {{ .Values.config.lakefs.repo }}
 ---
 apiVersion: v1
 kind: ConfigMap

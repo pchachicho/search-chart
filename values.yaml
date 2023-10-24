@@ -41,12 +41,22 @@ airflow:
         valueFrom:
           configMapKeyRef:
             name: search-data-config
-            key: lakefs_access_key_id
+            key: lakefs_access_key_id      
       - name: ROGER_LAKEFS__CONFIG_SECRET__ACCESS__KEY
         valueFrom:
           configMapKeyRef:
             name: search-data-config
             key: lakefs_secret_access_key
+      - name: ROGER_LAKEFS__CONFIG_BRANCH
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: lakefs_branch
+      - name: ROGER_LAKEFS__CONFIG_REPO
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: lakefs_repo
       - name: ROGER_ANNOTATION_NORMALIZER
         valueFrom:
           configMapKeyRef:
@@ -290,6 +300,8 @@ config:
     host: ""
     access_key: ""
     secret_key: ""
+    branch: ""
+    repo: ""
 elasticsearch:
   # default, maybe we ought to increase this as size increases
   # esJavaOpts: "-Xmx1g -Xms1g"
