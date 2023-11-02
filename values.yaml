@@ -474,7 +474,3 @@ ui:
       # disable workspaces
       enabled: "false"
     hidden_result_tabs: "cdes"
-  image:
-    pullPolicy: Always
-    repository: containers.renci.org/helxplatform/helx-ui
-    tag: v5.0.0
