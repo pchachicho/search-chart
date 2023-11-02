@@ -359,10 +359,10 @@ redis:
     resources:
       limits:
         cpu: 2
-        memory: 40Gi
+        memory: 45Gi
       requests:
         cpu: 1
-        memory: 40Gi
+        memory: 45Gi
     command: ""
     readinessProbe:
       enabled: true
@@ -396,10 +396,10 @@ redis:
     resources:
       limits:
         cpu: 2
-        memory: 32Gi
+        memory: 45Gi
       requests:
         cpu: 1
-        memory: 12Gi
+        memory: 45Gi
     extraFlags:
       - "--loadmodule"
       - "/FalkorDB/bin/linux-x64-release/src/falkordb.so"
