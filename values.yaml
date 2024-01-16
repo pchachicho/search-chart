@@ -62,11 +62,26 @@ airflow:
           configMapKeyRef:
             name: search-data-config
             key: normalizer_url
-      - name: ROGER_ANNOTATION_ANNOTATOR
+      - name: ROGER_ANNOTATION_ANNOTATOR__TYPE
         valueFrom:
           configMapKeyRef:
             name: search-data-config
-            key: annotator_url
+            key: annotator_type
+      - name: ROGER_ANNOTATION_ANNOTATOR__ARGS_MONARCH_URL
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: annotator_monarch_url
+      - name: ROGER_ANNOTATION_ANNOTATOR__ARGS_SAPBERT_CLASSIFICATION__URL
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: annotator_sapbert_classification_url
+      - name: ROGER_ANNOTATION_ANNOTATOR__ARGS_SAPBERT_ANNOTATOR__URL
+        valueFrom:
+          configMapKeyRef:
+            name: search-data-config
+            key: annotator_sapbert_annotator_url
       - name: ROGER_ANNOTATION_SYNONYM__SERVICE
         valueFrom:
           configMapKeyRef:
@@ -280,8 +295,13 @@ api:
     type: ClusterIP
 config:
   annotation:
+    annotator_type: "sapbert"
+    monarch: 
+      url: "https://api.monarchinitiative.org/api/nlp/annotate/entities?min_length=4&longest_only=false&include_abbreviation=false&include_acronym=false&include_numbers=false&content="
+    sapbert:
+      classification_url: "https://med-nemo.apps.renci.org/annotate/"
+      annotator_url: "https://babel-sapbert.apps.renci.org/annotate/"
     normalizer_url: https://nodenormalization-sri.renci.org/get_normalized_nodes?conflate=false&description=true&curie=
-    annotator_url: https://api.monarchinitiative.org/api/nlp/annotate/entities?min_length=4&longest_only=false&include_abbreviation=false&include_acronym=false&include_numbers=false&content=
     synonymizer_url: https://name-resolution-sri.renci.org/reverse_lookup
   input_sets: "bdc:v2.0,topmed:v2.0"
   data_source: "stars"
