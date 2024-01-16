@@ -37,7 +37,10 @@ data:
   kgx_data_sets: {{ .Values.config.kgx_data_sets }}
   normalizer_url: {{ .Values.config.annotation.normalizer_url | quote }}
   synonymizer_url: {{ .Values.config.annotation.synonymizer_url | quote }}
-  annotator_url: {{ .Values.config.annotation.annotator_url | quote }}
+  annotator_type: {{ .Values.config.annotation.annotator_type | quote }}
+  annotator_monarch_url: {{ .Values.config.annotation.monarch.url | quote }}
+  annotator_sapbert_classification_url: {{ .Values.config.annotation.sapbert.classification_url | quote }}
+  annotator_sapbert_annotator_url: {{ .Values.config.annotation.sapbert.annotator_url | quote }}
   s3_access_key: {{ .Values.config.s3.access_key }}
   s3_bucket: {{ .Values.config.s3.bucket }}
   s3_host: {{ .Values.config.s3.host }}
