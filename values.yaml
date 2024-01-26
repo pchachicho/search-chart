@@ -305,7 +305,7 @@ config:
     synonymizer_url: https://name-resolution-sri.renci.org/reverse_lookup
   input_sets: "bdc:v2.0,topmed:v2.0"
   data_source: "stars"
-  kgx_data_sets: "baseline-graph,cde-graph"
+  kgx_data_sets: "baseline-graph:v5.0,cde-graph:v5.0"
   node_to_queries_enabled: "false"
   # colon seperated mappings list by comma
   # eg : dbgap:Non-HEAL Studies,bacpac:HEAL Research Programs
