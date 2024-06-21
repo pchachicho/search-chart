@@ -19,6 +19,7 @@ jobs:
 # Do helm dependency update
     - name: Helm Dependency update
       run: | 
+        pwd
         # Define variables
         CHART_NAME=${{ github.repository }}
         CHART_FILE="${CHART_NAME}/Chart.yaml"
