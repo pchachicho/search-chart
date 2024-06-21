@@ -22,7 +22,7 @@ jobs:
 
     - name: Modify Chart.yaml
       run: |
-        cp mychart/Chart.yaml /tmp
+        cp Chart.yaml /tmp
         yq eval 'del(.dependencies[].version)' -i /tmp/Chart.yaml
         echo "Modified Chart.yaml file:"
         cat /tmp/Chart.yaml
