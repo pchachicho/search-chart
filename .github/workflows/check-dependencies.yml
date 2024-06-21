@@ -20,7 +20,7 @@ jobs:
     - name: Helm Dependency update
       run: | 
         # Define variables
-        CHART_FILE=Chart.yaml"
+        CHART_FILE="Chart.yaml"
         TMP_DIR="/tmp"
 
         # Ensure the output directory exists
