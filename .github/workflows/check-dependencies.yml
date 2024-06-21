@@ -1,0 +1,52 @@
+name: check-helm-dependencies
+on:
+  # schedule:
+  # # Every sunday at midnight UTC time
+  #   - cron: '0 0 \* \* 0'
+  push:
+
+jobs:
+  trigger-helm-charts:
+    runs-on: ubuntu-latest
+    steps:
+# Do helm dependency update
+    - name: Helm Dependency update
+      run: | 
+        # Define variables
+        CHART_NAME="mychart"
+        CHART_FILE="${CHART_NAME}/Chart.yaml"
+        TMP_DIR="/tmp"
+
+        # Ensure the output directory exists
+        mkdir -p "${TMP_DIR}"
+
+        # Copy the original Chart.yaml to /tmp directory
+        cp "${CHART_FILE}" "${TMP_DIR}"
+
+        # Use jq to manipulate the Chart.yaml file
+        # Remove special syntax around version in dependencies section
+        jq 'if has("dependencies") then .dependencies |= map(if has("version") then .version |= sub("[^0-9.]";"") else . end) else . end' \
+          "${TMP_DIR}/Chart.yaml" > "${TMP_DIR}/Chart.tmp" && mv "${TMP_DIR}/Chart.tmp" "${TMP_DIR}/Chart.yaml"
+
+        echo "Modified Chart.yaml file copied to ${TMP_DIR}/Chart.yaml"
+
+# Add new files to new branch
+    - name: Print the Chart.yaml
+      run: | 
+        cat /tmp/Chart.yaml
+
+
+# https://cli.github.com/manual/gh_pr_create
+# use github tool to create the PR
+
+    # - name: Create New CI Pull Request
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     gh pr create \
+    #       --fill --base develop \
+    #       --head actions/${{ steps.package.outputs.package }} \
+    #       --reviewer ${{ inputs.actor }} \
+    #       --reviewer pj-linebaugh
+    #       --reviewer waTeim \
+    #       --reviewer YaphetKG
