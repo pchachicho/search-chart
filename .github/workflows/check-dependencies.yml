@@ -23,11 +23,17 @@ jobs:
     - name: Modify Chart.yaml
       run: |
         cp Chart.yaml /tmp
-        yq eval 'del(.dependencies[].version)' -i /tmp/Chart.yaml
+        yq eval 'del(.dependencies[].version)' -i Chart.yaml
         echo "Modified Chart.yaml file:"
-        cat /tmp/Chart.yaml
+        cat Chart.yaml
 
+    - name: Helm Dependecy Update 
+      run: | 
+       helm dependency update 
 
+    - name: Check Lock File 
+      run: | 
+        cat Chart.lock
 # https://cli.github.com/manual/gh_pr_create
 # use github tool to create the PR
 
