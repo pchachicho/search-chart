@@ -20,7 +20,7 @@ jobs:
     - name: Helm Dependency update
       run: | 
         # Define variables
-        CHART_NAME="search-chart"
+        CHART_NAME=${{ github.repository }}
         CHART_FILE="${CHART_NAME}/Chart.yaml"
         TMP_DIR="/tmp"
 
