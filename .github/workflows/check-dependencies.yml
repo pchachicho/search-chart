@@ -17,15 +17,15 @@ jobs:
         # fetch-depth: 0 means, get all branches and commits
         fetch-depth: 0
 
-    - name: Install jq
-      run: sudo apt-get update && sudo apt-get install -y jq
+    # - name: Install jq
+    #   run: sudo apt-get update && sudo apt-get install -y jq
 
     - name: Modify Chart.yaml
       run: |
-        cp Chart.yaml /tmp
-        jq 'del(.dependencies[].version)' Chart.yaml > Chart.tmp && mv Chart.tmp Chart.yaml
+        cp mychart/Chart.yaml /tmp
+        yq eval 'del(.dependencies[].version)' -i /tmp/Chart.yaml
         echo "Modified Chart.yaml file:"
-        cat Chart.yaml
+        cat /tmp/Chart.yaml
 
 
 # https://cli.github.com/manual/gh_pr_create
