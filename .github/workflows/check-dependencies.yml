@@ -9,11 +9,18 @@ jobs:
   trigger-helm-charts:
     runs-on: ubuntu-latest
     steps:
+
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }} 
+        # fetch-depth: 0 means, get all branches and commits
+        fetch-depth: 0
 # Do helm dependency update
     - name: Helm Dependency update
       run: | 
         # Define variables
-        CHART_NAME="mychart"
+        CHART_NAME="search-chart"
         CHART_FILE="${CHART_NAME}/Chart.yaml"
         TMP_DIR="/tmp"
 
