@@ -19,6 +19,7 @@ jobs:
 # Do helm dependency update
     - name: Helm Dependency update
       run: | 
+        apt-get install jq
         # Define variables
         CHART_FILE="Chart.yaml"
         TMP_DIR="/tmp"
