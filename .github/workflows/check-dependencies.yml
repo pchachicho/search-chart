@@ -29,7 +29,9 @@ jobs:
 
     - name: Helm Dependecy Update 
       run: | 
-       helm dependency update 
+        helm repo add helx-charts https://helxplatform.github.io/helm-charts
+        helm repo update
+        helm dependency update 
 
     - name: Check Lock File 
       run: | 
