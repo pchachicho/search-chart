@@ -36,7 +36,8 @@ jobs:
         for i in $(ls ./charts) 
         do 
           helm images get $i --no-color >> /tmp/image_report.txt 2> /dev/null
-        done  
+        done
+      continue-on-error: true
 
     - name: Print out report 
       run: | 
