@@ -32,11 +32,22 @@ jobs:
 
     - name: Generate report of image versions 
       run: |
-        ls
-        for i in $(ls ./charts) 
-        do 
-          helm images get $i --no-color >> /tmp/image_report.txt 2> /dev/null
+        ls ./charts/
+        # Check if ./charts directory exists
+        if [ ! -d "./charts" ]; then
+          echo "Error: Directory './charts' not found."
+          exit 1
+        fi
+
+        # Loop through files in ./charts directory
+        for i in ./charts/*
+        do
+          if [ -f "$i" ]; then
+            # Assuming helm images get expects a filename (not just the name without path)
+            helm images get "$i" --no-color >> /tmp/image_report.txt 2> /dev/null
+          fi
         done
+
       continue-on-error: true
 
     - name: Print out report 
