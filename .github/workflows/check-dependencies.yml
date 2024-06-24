@@ -20,22 +20,28 @@ jobs:
     # - name: Install jq
     #   run: sudo apt-get update && sudo apt-get install -y jq
 
-    - name: Modify Chart.yaml
-      run: |
-        cp Chart.yaml /tmp
-        yq eval 'del(.dependencies[].version)' -i Chart.yaml
-        echo "Modified Chart.yaml file:"
-        cat Chart.yaml
-
     - name: Helm Dependecy Update 
       run: | 
         helm repo add helx-charts https://helxplatform.github.io/helm-charts
         helm repo update
-        helm dependency update 
+        helm dependency update
 
-    - name: Check Lock File 
+    - name: Install helm-images plugin
       run: | 
-        cat Chart.lock
+        helm plugin install https://github.com/nikhilsbhat/helm-images
+
+    - name: Generate report of image versions 
+      run: |
+        for i in $(ls ./charts) 
+        do 
+          helm images get $i --no-color >> /tmp/image_report.txt 2> /dev/null
+        done  
+
+    - name: Print out report 
+      run: | 
+        cat /tmp/image_report.txt 
+
+
 # https://cli.github.com/manual/gh_pr_create
 # use github tool to create the PR
 
