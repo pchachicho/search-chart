@@ -32,7 +32,6 @@ jobs:
 
     - name: Generate report of image versions 
       run: |
-        ls ./charts/
         # Check if ./charts directory exists
         if [ ! -d "./charts" ]; then
           echo "Error: Directory './charts' not found."
@@ -47,13 +46,11 @@ jobs:
             helm images get "$i" --no-color >> /tmp/ip.txt 2> /dev/null
           fi
         done
-        cat /tmp/ip.txt | sort | uniq >> /tmp/image_report.txt
-        
-
       continue-on-error: true
 
     - name: Print out report 
-      run: | 
+      run: |
+        cat /tmp/ip.txt | sort | uniq >> /tmp/image_report.txt
         cat /tmp/image_report.txt
 
     - name: Pull Images 
