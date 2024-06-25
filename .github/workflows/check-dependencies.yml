@@ -74,15 +74,16 @@ jobs:
     - name: Run Trivy
       run: |
         mkdir /tmp/trivy/
-        while IFS=read -r line; do 
+        filename=/tmp/image_report.txt
+        while IFS= read -r line; do 
           echo "Running scan on $line"
           trivy image \
             --format sarif \
-            --output /tmp/trivy/vuln_scan_$line.sarif \
+            --output /tmp/trivy/$line_vuln_scan.sarif \
             --scanners vuln \
             --severity HIGH,CRITICAL \
             $line
-        done < /tmp/image_report.txt
+        done < "$filename"
 
          
 
