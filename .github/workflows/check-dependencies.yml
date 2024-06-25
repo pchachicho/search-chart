@@ -85,20 +85,8 @@ jobs:
             $line
         done < "$filename"
 
-         
-
-
-# https://cli.github.com/manual/gh_pr_create
-# use github tool to create the PR
-
-    # - name: Create New CI Pull Request
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   run: |
-    #     gh pr create \
-    #       --fill --base develop \
-    #       --head actions/${{ steps.package.outputs.package }} \
-    #       --reviewer ${{ inputs.actor }} \
-    #       --reviewer pj-linebaugh
-    #       --reviewer waTeim \
-    #       --reviewer YaphetKG
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        category: dependency-image-checks
+        sarif_file: '/tmp/trivy/'     
