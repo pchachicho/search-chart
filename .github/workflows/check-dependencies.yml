@@ -87,7 +87,7 @@ jobs:
             --format sarif \
             --output /tmp/trivy/$line_vuln_scan.sarif \
             --scanners vuln \
-            --severity HIGH,CRITICAL \
+            --severity HIGH,CRITICAL,Medium \
             $line
         done < "$filename"
 
@@ -95,4 +95,4 @@ jobs:
       uses: github/codeql-action/upload-sarif@v3
       with:
         category: dependency-image-checks
-        sarif_file: '/tmp/trivy/image_report.txt'     
+        sarif_file: '/tmp/trivy/'     
