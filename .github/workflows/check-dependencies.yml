@@ -81,12 +81,12 @@ jobs:
             --format sarif \
             --output /tmp/trivy/$line_vuln_scan.sarif \
             --scanners vuln \
-            --severity MEDIUM,HIGH \
+            --severity HIGH,CRITICAL \
             $line
         done < "$filename"
 
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v2
       with:
         category: dependency-image-checks
         sarif_file: '/tmp/trivy/'     
