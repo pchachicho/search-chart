@@ -5,14 +5,8 @@ on:
   #   - cron: '0 0 \* \* 0'
   push:
 
-permissions: 
-  contents: read
 jobs:
   trigger-helm-charts:
-    permissions:
-     contents: read # for actions/checkout to fetch code
-     security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-     actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     runs-on: ubuntu-latest
     steps:
 
@@ -87,7 +81,7 @@ jobs:
             --format sarif \
             --output /tmp/trivy/$line_vuln_scan.sarif \
             --scanners vuln \
-            --severity LOW \
+            --severity MEDIUM,HIGH \
             $line
         done < "$filename"
 
